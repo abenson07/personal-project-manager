@@ -1,18 +1,19 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getProjectsByPhase } from '@/lib/database'
+import { useRouter } from 'next/navigation'
+import { getProjectsByPhase, createProject } from '@/lib/database'
 import type { Project } from '@/types/database'
 import { ProjectPhase } from '@/types/database'
 import ProjectGrid from '@/components/ProjectGrid'
-import NewProjectModal from '@/components/NewProjectModal'
 
 export default function Dashboard() {
+  const router = useRouter()
   const [activeProjects, setActiveProjects] = useState<Project[]>([])
   const [inDefinitionProjects, setInDefinitionProjects] = useState<Project[]>([])
   const [completedProjects, setCompletedProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
-  const [showNewProjectModal, setShowNewProjectModal] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
 
   const loadProjects = async () => {
     try {
@@ -36,8 +37,15 @@ export default function Dashboard() {
     loadProjects()
   }, [])
 
-  const handleCloseModal = () => {
-    setShowNewProjectModal(false)
+  const handleNewProject = async () => {
+    setIsCreating(true)
+    try {
+      const project = await createProject('New Project', ProjectPhase.CONCEPT)
+      router.push(`/projects/${project.id}/concept`)
+    } catch (error) {
+      console.error('Failed to create project:', error)
+      setIsCreating(false)
+    }
   }
 
   if (loading) {
@@ -60,10 +68,11 @@ export default function Dashboard() {
           </p>
         </div>
         <button
-          onClick={() => setShowNewProjectModal(true)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          onClick={handleNewProject}
+          disabled={isCreating}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600"
         >
-          New Project
+          {isCreating ? 'Creating...' : 'New Project'}
         </button>
       </div>
 
@@ -87,11 +96,6 @@ export default function Dashboard() {
         </h2>
         <ProjectGrid projects={completedProjects} phase={ProjectPhase.COMPLETED} />
       </section>
-
-      <NewProjectModal
-        isOpen={showNewProjectModal}
-        onClose={handleCloseModal}
-      />
     </div>
   )
 }
