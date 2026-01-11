@@ -256,7 +256,7 @@
         "dependencies": [
           "3"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -316,12 +316,13 @@
               4
             ],
             "details": "Run npm test to execute all dashboard-related tests and fix any failing tests. Execute npm run build to ensure production build succeeds and resolve any build errors. Verify responsive design works across different screen sizes. Test route-level functionality and navigation. Once all tests pass and build succeeds, commit changes and push to repository.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run full test suite with npm test. Execute production build with npm run build. Test responsive design basics and route navigation. Verify all functionality works before committing.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:47:38.122Z"
           }
         ],
-        "updatedAt": "2026-01-11T18:47:11.494Z"
+        "updatedAt": "2026-01-11T18:47:38.122Z"
       },
       {
         "id": "5",
@@ -333,7 +334,7 @@
         "dependencies": [
           "4"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -341,9 +342,10 @@
             "description": "Set up the basic concept page component with proper Next.js routing and layout structure",
             "dependencies": [],
             "details": "Create app/projects/[projectId]/concept/page.tsx with proper TypeScript types. Set up the basic component structure with layout, sidebar for assets, and main content area for markdown editor. Import necessary dependencies and establish the component architecture.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify route /projects/[id]/concept loads without errors and displays basic layout structure",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:47:54.681Z"
           },
           {
             "id": 2,
@@ -353,9 +355,10 @@
               1
             ],
             "details": "Install react-markdown and related dependencies. Create markdown editor component with textarea input and live preview. Implement proper styling for markdown rendering. Add toolbar with common markdown formatting options. Ensure proper state management for markdown content.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test markdown editing, live preview updates, and proper rendering of various markdown elements",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:47:55.055Z"
           },
           {
             "id": 3,
@@ -365,9 +368,10 @@
               1
             ],
             "details": "Implement file upload component with drag-and-drop support. Add URL pasting functionality for external assets. Create asset processing logic for different file types (images, documents). Implement Supabase Storage integration or base64 conversion for database storage. Add proper error handling and validation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test file upload via drag-drop and file picker. Verify URL pasting works correctly. Test asset storage and retrieval functionality",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:47:55.344Z"
           },
           {
             "id": 4,
@@ -377,9 +381,10 @@
               3
             ],
             "details": "Create asset list component in sidebar with thumbnails and truncated text. Implement image preview modal with zoom functionality. Add annotation system allowing users to add notes to assets. Create asset management controls (delete, reorder, edit). Ensure responsive design and proper scrolling for long asset lists.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify asset list displays correctly with previews. Test annotation functionality and asset management controls. Check responsive behavior",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:47:55.600Z"
           },
           {
             "id": 5,
@@ -394,7 +399,8 @@
             "testStrategy": "Test auto-save functionality with various scenarios. Verify npm test passes all test suites. Confirm npm run build completes successfully without errors",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-01-11T18:47:55.600Z"
       },
       {
         "id": "6",
@@ -762,9 +768,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-01-11T18:47:11.495Z",
+      "lastModified": "2026-01-11T18:47:55.600Z",
       "taskCount": 10,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "master"
       ]
