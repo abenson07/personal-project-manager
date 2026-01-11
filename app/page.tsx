@@ -5,34 +5,40 @@ import { getProjectsByPhase } from '@/lib/database'
 import type { Project } from '@/types/database'
 import { ProjectPhase } from '@/types/database'
 import ProjectGrid from '@/components/ProjectGrid'
+import NewProjectModal from '@/components/NewProjectModal'
 
 export default function Dashboard() {
   const [activeProjects, setActiveProjects] = useState<Project[]>([])
   const [inDefinitionProjects, setInDefinitionProjects] = useState<Project[]>([])
   const [completedProjects, setCompletedProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false)
+
+  const loadProjects = async () => {
+    try {
+      const [active, inDefinition, completed] = await Promise.all([
+        getProjectsByPhase(ProjectPhase.PRD),
+        getProjectsByPhase(ProjectPhase.CONCEPT),
+        getProjectsByPhase(ProjectPhase.COMPLETED),
+      ])
+      
+      setActiveProjects(active)
+      setInDefinitionProjects(inDefinition)
+      setCompletedProjects(completed)
+    } catch (error) {
+      console.error('Failed to load projects:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const [active, inDefinition, completed] = await Promise.all([
-          getProjectsByPhase(ProjectPhase.PRD),
-          getProjectsByPhase(ProjectPhase.CONCEPT),
-          getProjectsByPhase(ProjectPhase.COMPLETED),
-        ])
-        
-        setActiveProjects(active)
-        setInDefinitionProjects(inDefinition)
-        setCompletedProjects(completed)
-      } catch (error) {
-        console.error('Failed to load projects:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     loadProjects()
   }, [])
+
+  const handleCloseModal = () => {
+    setShowNewProjectModal(false)
+  }
 
   if (loading) {
     return (
@@ -53,7 +59,10 @@ export default function Dashboard() {
             Manage your projects and track progress
           </p>
         </div>
-        <button className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+        <button
+          onClick={() => setShowNewProjectModal(true)}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+        >
           New Project
         </button>
       </div>
@@ -78,6 +87,11 @@ export default function Dashboard() {
         </h2>
         <ProjectGrid projects={completedProjects} phase={ProjectPhase.COMPLETED} />
       </section>
+
+      <NewProjectModal
+        isOpen={showNewProjectModal}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }
