@@ -2,15 +2,13 @@
 
 import Link from 'next/link'
 import { Project, ProjectPhase } from '@/types/database'
-import EditableTitle from './EditableTitle'
 
 interface ProjectCardProps {
   project: Project
   progress?: number
-  onUpdate?: () => void
 }
 
-export default function ProjectCard({ project, progress = 0, onUpdate }: ProjectCardProps) {
+export default function ProjectCard({ project, progress = 0 }: ProjectCardProps) {
   const phaseColors = {
     [ProjectPhase.CONCEPT]: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
     [ProjectPhase.PRD]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -21,20 +19,10 @@ export default function ProjectCard({ project, progress = 0, onUpdate }: Project
     <Link
       href={`/projects/${project.id}/concept`}
       className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
-      onClick={(e) => {
-        // Prevent navigation when clicking on title
-        if ((e.target as HTMLElement).closest('.editable-title')) {
-          e.preventDefault()
-        }
-      }}
     >
       <div className="mb-4 flex items-start justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 editable-title">
-          <EditableTitle
-            projectId={project.id}
-            initialValue={project.name}
-            onUpdate={onUpdate}
-          />
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {project.name}
         </h3>
         <span
           className={`rounded-full px-3 py-1 text-xs font-medium ${phaseColors[project.phase]}`}

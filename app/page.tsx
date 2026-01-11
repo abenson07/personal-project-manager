@@ -33,10 +33,6 @@ export default function Dashboard() {
     }
   }
 
-  const handleProjectUpdate = () => {
-    loadProjects()
-  }
-
   useEffect(() => {
     loadProjects()
   }, [])
@@ -84,21 +80,21 @@ export default function Dashboard() {
         <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
           Active Projects
         </h2>
-        <ProjectGrid projects={activeProjects} phase={ProjectPhase.PRD} onProjectUpdate={handleProjectUpdate} />
+        <ProjectGrid projects={activeProjects} phase={ProjectPhase.PRD} />
       </section>
 
       <section>
         <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
           In Definition
         </h2>
-        <ProjectGrid projects={inDefinitionProjects} phase={ProjectPhase.CONCEPT} onProjectUpdate={handleProjectUpdate} />
+        <ProjectGrid projects={inDefinitionProjects} phase={ProjectPhase.CONCEPT} />
       </section>
 
       <section>
         <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
           Completed
         </h2>
-        <ProjectGrid projects={completedProjects} phase={ProjectPhase.COMPLETED} onProjectUpdate={handleProjectUpdate} />
+        <ProjectGrid projects={completedProjects} phase={ProjectPhase.COMPLETED} />
       </section>
     </div>
   )

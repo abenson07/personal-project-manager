@@ -6,10 +6,9 @@ import ProjectCard from './ProjectCard'
 interface ProjectGridProps {
   projects: Project[]
   phase: ProjectPhase
-  onProjectUpdate?: () => void
 }
 
-export default function ProjectGrid({ projects, phase, onProjectUpdate }: ProjectGridProps) {
+export default function ProjectGrid({ projects, phase }: ProjectGridProps) {
   if (projects.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
@@ -25,7 +24,6 @@ export default function ProjectGrid({ projects, phase, onProjectUpdate }: Projec
           key={project.id}
           project={project}
           progress={0}
-          onUpdate={onProjectUpdate}
         />
       ))}
     </div>
