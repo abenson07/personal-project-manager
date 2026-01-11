@@ -2,10 +2,22 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { getProjectById, getProjectNotes, createProjectNote, getAssetsByProject, createAsset, getFeatureSetsByProject } from '@/lib/database'
-import type { Project, ProjectNote, Asset, FeatureSet } from '@/types/database'
+import { 
+  getProjectById, 
+  getProjectNotes, 
+  createProjectNote, 
+  getAssetsByProject, 
+  createAsset, 
+  getFeatureSetsByProject,
+  getPRDNotesByProject,
+  createPRDNote,
+  markPRDNotesAsTriaged
+} from '@/lib/database'
+import type { Project, ProjectNote, Asset, FeatureSet, PRDNote } from '@/types/database'
+import { PRDNoteContext } from '@/types/database'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import AssetSidebar from '@/components/AssetSidebar'
+import NotesSidebar from '@/components/NotesSidebar'
 import EditableTitle from '@/components/EditableTitle'
 import StatusProcessFlow from '@/components/StatusProcessFlow'
 
@@ -22,12 +34,17 @@ function ProjectPageContent() {
   const [currentNote, setCurrentNote] = useState('')
   const [assets, setAssets] = useState<Asset[]>([])
   const [featureSets, setFeatureSets] = useState<FeatureSet[]>([])
+  const [prdNotes, setPrdNotes] = useState<PRDNote[]>([])
+  const [featureSetsNotes, setFeatureSetsNotes] = useState<PRDNote[]>([])
   const [summary, setSummary] = useState('')
   const [loading, setLoading] = useState(true)
+  const [isProcessingPRD, setIsProcessingPRD] = useState(false)
+  const [isProcessingFeatureSets, setIsProcessingFeatureSets] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
       try {
+        // Load core project data first
         const [projectData, notesData, assetsData, featureSetsData] = await Promise.all([
           getProjectById(projectId),
           getProjectNotes(projectId),
@@ -41,6 +58,21 @@ function ProjectPageContent() {
         setFeatureSets(featureSetsData)
         if (notesData.length > 0) {
           setCurrentNote(notesData[0].content)
+        }
+
+        // Load PRD notes separately - don't fail if table doesn't exist yet
+        try {
+          const [prdNotesData, featureSetsNotesData] = await Promise.all([
+            getPRDNotesByProject(projectId, PRDNoteContext.PRD),
+            getPRDNotesByProject(projectId, PRDNoteContext.FEATURE_SETS),
+          ])
+          setPrdNotes(prdNotesData)
+          setFeatureSetsNotes(featureSetsNotesData)
+        } catch (prdNotesError) {
+          // If PRD notes table doesn't exist yet, just log and continue
+          console.warn('PRD notes table may not exist yet:', prdNotesError)
+          setPrdNotes([])
+          setFeatureSetsNotes([])
         }
       } catch (error) {
         console.error('Failed to load project data:', error)
@@ -75,6 +107,64 @@ function ProjectPageContent() {
       setAssets(updatedAssets)
     } catch (error) {
       console.error('Failed to add asset:', error)
+    }
+  }
+
+  const handleAddPRDNote = async (content: string) => {
+    if (!projectId) return
+    
+    try {
+      await createPRDNote(projectId, PRDNoteContext.PRD, content)
+      const updatedNotes = await getPRDNotesByProject(projectId, PRDNoteContext.PRD)
+      setPrdNotes(updatedNotes)
+    } catch (error) {
+      console.error('Failed to add PRD note:', error)
+    }
+  }
+
+  const handleAddFeatureSetsNote = async (content: string) => {
+    if (!projectId) return
+    
+    try {
+      await createPRDNote(projectId, PRDNoteContext.FEATURE_SETS, content)
+      const updatedNotes = await getPRDNotesByProject(projectId, PRDNoteContext.FEATURE_SETS)
+      setFeatureSetsNotes(updatedNotes)
+    } catch (error) {
+      console.error('Failed to add feature sets note:', error)
+    }
+  }
+
+  const handleRerunPRD = async () => {
+    if (!projectId) return
+    
+    setIsProcessingPRD(true)
+    try {
+      // TODO: Implement actual PRD processing logic here
+      // For now, we'll just mark notes as triaged
+      await markPRDNotesAsTriaged(projectId, PRDNoteContext.PRD)
+      const updatedNotes = await getPRDNotesByProject(projectId, PRDNoteContext.PRD)
+      setPrdNotes(updatedNotes)
+    } catch (error) {
+      console.error('Failed to re-run PRD:', error)
+    } finally {
+      setIsProcessingPRD(false)
+    }
+  }
+
+  const handleRerunFeatureSets = async () => {
+    if (!projectId) return
+    
+    setIsProcessingFeatureSets(true)
+    try {
+      // TODO: Implement actual feature sets processing logic here
+      // For now, we'll just mark notes as triaged
+      await markPRDNotesAsTriaged(projectId, PRDNoteContext.FEATURE_SETS)
+      const updatedNotes = await getPRDNotesByProject(projectId, PRDNoteContext.FEATURE_SETS)
+      setFeatureSetsNotes(updatedNotes)
+    } catch (error) {
+      console.error('Failed to re-run feature sets:', error)
+    } finally {
+      setIsProcessingFeatureSets(false)
     }
   }
 
@@ -230,6 +320,27 @@ function ProjectPageContent() {
         <AssetSidebar
           assets={assets}
           onAddAsset={handleAddAsset}
+        />
+      )}
+
+      {/* Notes Sidebar - show in prd and features views */}
+      {view === 'prd' && (
+        <NotesSidebar
+          notes={prdNotes}
+          context={PRDNoteContext.PRD}
+          onAddNote={handleAddPRDNote}
+          onRerunPRD={handleRerunPRD}
+          isProcessing={isProcessingPRD}
+        />
+      )}
+
+      {view === 'features' && (
+        <NotesSidebar
+          notes={featureSetsNotes}
+          context={PRDNoteContext.FEATURE_SETS}
+          onAddNote={handleAddFeatureSetsNote}
+          onRerunPRD={handleRerunFeatureSets}
+          isProcessing={isProcessingFeatureSets}
         />
       )}
     </div>

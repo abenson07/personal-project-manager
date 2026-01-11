@@ -7,14 +7,17 @@ import type {
   FeatureVersion,
   MiniPRD,
   MiniPRDTask,
-  Test
+  Test,
+  PRDNote
 } from '@/types/database'
 import {
   ProjectPhase,
   AssetType,
   MiniPRDStatus,
   TaskType,
-  TestType
+  TestType,
+  PRDNoteStatus,
+  PRDNoteContext
 } from '@/types/database'
 
 // Custom error types
@@ -382,6 +385,95 @@ export async function getTestsByMiniPRD(miniPrdId: string): Promise<Test[]> {
   } catch (error) {
     if (error instanceof DatabaseError) throw error
     throw new DatabaseError('Failed to get tests', undefined, String(error))
+  }
+}
+
+// PRD Notes operations
+export async function createPRDNote(
+  projectId: string,
+  context: PRDNoteContext,
+  content: string
+): Promise<PRDNote> {
+  try {
+    const { data, error } = await supabase
+      .from('prd_notes')
+      .insert({ project_id: projectId, context, content, status: PRDNoteStatus.PENDING })
+      .select()
+      .single()
+
+    if (error) throw new DatabaseError(error.message, error.code, error.details)
+    return data
+  } catch (error) {
+    if (error instanceof DatabaseError) throw error
+    throw new DatabaseError('Failed to create PRD note', undefined, String(error))
+  }
+}
+
+export async function getPRDNotesByProject(
+  projectId: string,
+  context?: PRDNoteContext,
+  status?: PRDNoteStatus
+): Promise<PRDNote[]> {
+  try {
+    let query = supabase
+      .from('prd_notes')
+      .select('*')
+      .eq('project_id', projectId)
+
+    if (context) {
+      query = query.eq('context', context)
+    }
+
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false })
+
+    if (error) throw new DatabaseError(error.message, error.code, error.details)
+    return data || []
+  } catch (error) {
+    if (error instanceof DatabaseError) throw error
+    throw new DatabaseError('Failed to get PRD notes', undefined, String(error))
+  }
+}
+
+export async function updatePRDNoteStatus(
+  id: string,
+  status: PRDNoteStatus
+): Promise<PRDNote> {
+  try {
+    const { data, error } = await supabase
+      .from('prd_notes')
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw new DatabaseError(error.message, error.code, error.details)
+    return data
+  } catch (error) {
+    if (error instanceof DatabaseError) throw error
+    throw new DatabaseError('Failed to update PRD note status', undefined, String(error))
+  }
+}
+
+export async function markPRDNotesAsTriaged(
+  projectId: string,
+  context: PRDNoteContext
+): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('prd_notes')
+      .update({ status: PRDNoteStatus.TRIAGED })
+      .eq('project_id', projectId)
+      .eq('context', context)
+      .eq('status', PRDNoteStatus.PENDING)
+
+    if (error) throw new DatabaseError(error.message, error.code, error.details)
+  } catch (error) {
+    if (error instanceof DatabaseError) throw error
+    throw new DatabaseError('Failed to mark PRD notes as triaged', undefined, String(error))
   }
 }
 

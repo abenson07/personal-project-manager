@@ -68,6 +68,15 @@ export interface Test {
   created_at: string
 }
 
+export interface PRDNote {
+  id: string
+  project_id: string
+  context: PRDNoteContext
+  content: string
+  status: PRDNoteStatus
+  created_at: string
+}
+
 // Enum types matching database enums
 export enum ProjectPhase {
   CONCEPT = 'concept',
@@ -101,5 +110,15 @@ export enum TestType {
   INTEGRATION = 'integration',
   E2E = 'e2e',
   MANUAL = 'manual'
+}
+
+export enum PRDNoteStatus {
+  PENDING = 'pending',
+  TRIAGED = 'triaged'
+}
+
+export enum PRDNoteContext {
+  PRD = 'prd',
+  FEATURE_SETS = 'feature_sets'
 }
 
