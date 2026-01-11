@@ -1,0 +1,363 @@
+# Task Master Project Management App — Master PRD
+
+## Overview
+
+This is a small, personal project management app designed to help plan ideas, evolve them into structured PRDs, and break work into executable Mini PRDs that can be handed off to Taskmaster in Cursor.
+
+The system emphasizes:
+- Clear separation of **idea definition**, **planning**, and **execution**
+- Granular routing so all views, projects, PRDs, and Mini PRDs are addressable via URL
+- Tight integration with Supabase for persistence
+- Automated testing and build validation for every task
+- A workflow optimized for iterative, AI-assisted development
+
+---
+
+## Goals
+
+1. Capture raw ideas and assets without structure pressure
+2. Convert ideas into a structured Master PRD
+3. Identify feature sets and version them (MVP, V1, V2, etc.)
+4. Break features into Mini PRDs suitable for Taskmaster execution
+5. Track execution status of Mini PRDs
+6. Separate human tasks from dependencies
+7. Define acceptance criteria and automated tests per Mini PRD
+8. Preserve notes and context across the lifecycle
+9. Ensure all work is testable, routable, and build-safe
+
+---
+
+## Non-Goals
+
+- Multi-user collaboration
+- Permissions or role management
+- Public sharing
+- Mobile-first design
+- Real-time collaboration
+
+---
+
+## Technical Stack
+
+- **Framework**: Next.js (App Router), React
+- **Database**: Supabase (Postgres)
+- **Hosting**: Webflow Cloud
+- **Task Execution**: Taskmaster in Cursor
+- **Testing**:
+  - Unit + integration tests per task
+  - Route-level verification
+  - Build validation via `npm run build` or `npm start`
+
+---
+
+## Core Terminology
+
+- **View**: UI screen / route
+- **Phase**: Conceptual maturity of a project
+- **Mode**: Sub-context inside a view
+- **Status**: Execution state of a Mini PRD
+- **Version**: Capability slice (MVP, V1, V2)
+
+---
+
+## Project Phases
+
+A project is always in exactly one phase:
+
+1. **Concept**
+2. **PRD**
+3. **Completed**
+
+---
+
+## Views & Routing
+
+All views must be directly addressable via URL.
+
+### Dashboard View
+
+**Route**
+/
+
+yaml
+Copy code
+
+**Purpose**
+- Entry point
+- Global orientation
+
+**Displays**
+- Recently active projects
+- Progress indicators (% of Mini PRDs completed)
+- CTA: Start new project
+
+---
+
+### Concept View
+
+**Route**
+/projects/[projectId]/concept
+
+markdown
+Copy code
+
+**Phase**
+- Concept
+
+**Main Content**
+- Single markdown document (freeform notes)
+
+**Sidebar**
+- Asset ingestion:
+  - Upload image file
+  - Paste image URL
+  - Optional text annotation
+- Vertical asset list with truncated annotation text
+
+**Outcome**
+- Raw thoughts and assets captured
+- No structure enforced
+
+---
+
+### PRD View
+
+**Route**
+/projects/[projectId]/prd
+
+markdown
+Copy code
+
+**Phase**
+- PRD (this is considered “Active”)
+
+The PRD View contains multiple **modes**, not separate pages.
+
+---
+
+#### PRD Definition Mode
+
+**Tabs**
+- Summary
+- Full PRD
+- Feature Sets
+
+**Summary Tab**
+- High-level description of the project
+
+**Full PRD Tab**
+- Complete scope
+- Architecture considerations
+- Database needs
+- Integration assumptions
+
+**Sidebar**
+- Inline notes input
+- “Refine” button:
+  - AI refines PRD using sidebar notes
+  - Repeatable loop
+
+---
+
+#### Feature Sets Tab
+
+**Purpose**
+- Define and version features
+
+**Behavior**
+- AI extracts feature sets from Full PRD
+- Each feature includes:
+  - Description
+  - Version buckets:
+    - MVP
+    - V1
+    - V2
+    - etc.
+
+**Versioning Interaction**
+- Start with “Define MVP”
+- Enter creates bullet points
+- Once MVP exists, allow “Define V1”
+- Earlier versions lock once next version is started
+
+---
+
+### PRD Planning Mode (subset of PRD View)
+
+**Triggered by**
+- “Plan project” action
+
+**Purpose**
+- Convert feature sets into executable Mini PRDs
+
+**Displays**
+- Mini PRDs grouped by version (MVP, V1, V2)
+- Clickable Mini PRDs
+
+**Sidebar**
+- Notes for future changes or follow-ups
+
+---
+
+### Mini PRD Detail View
+
+**Route**
+/projects/[projectId]/prd/[miniPrdId]
+
+markdown
+Copy code
+
+**Phase**
+- PRD
+
+**Content**
+- Mini PRD scope
+- Acceptance criteria checklist
+- Automated test definitions
+
+**Sidebar**
+- Human task checklist
+- Dependencies (non-human prerequisites)
+
+**Status**
+- Planned
+- In Development
+- Ready for Review
+- Completed
+
+---
+
+## Sidebar Navigation Structure
+
+Sidebar groups projects by **Phase**:
+
+- **Active**
+  - Projects in PRD phase
+  - Tagged by version focus (MVP, V1, etc.)
+
+- **In Definition**
+  - Projects in Concept phase
+
+- **Completed**
+  - Projects in Completed phase
+
+---
+
+## Data Model (Supabase)
+
+### Tables
+
+#### projects
+- id (uuid, pk)
+- name (text)
+- phase (enum: concept, prd, completed)
+- created_at
+- updated_at
+
+#### project_notes
+- id
+- project_id (fk)
+- content (markdown)
+- created_at
+
+#### assets
+- id
+- project_id (fk)
+- type (upload | url)
+- source
+- annotation
+- created_at
+
+#### feature_sets
+- id
+- project_id (fk)
+- name
+- description
+
+#### feature_versions
+- id
+- feature_set_id (fk)
+- version (mvp, v1, v2, etc.)
+- definition (text)
+
+#### mini_prds
+- id
+- project_id (fk)
+- feature_set_id (fk)
+- version
+- content
+- status (planned, in_dev, review, completed)
+
+#### mini_prd_tasks
+- id
+- mini_prd_id (fk)
+- type (human | dependency)
+- description
+- completed (boolean)
+
+#### tests
+- id
+- mini_prd_id (fk)
+- test_type (unit | integration | route)
+- description
+
+---
+
+## Taskmaster Execution Requirements
+
+### For Every Task Created
+
+Each Taskmaster task MUST include:
+
+1. **Automated Tests**
+   - Unit tests where applicable
+   - Integration tests for Supabase interactions
+   - Route-level tests verifying correct rendering and data loading
+
+2. **Acceptance Criteria**
+   - Explicit checklist
+   - Includes:
+     - Routes to verify
+     - Expected UI states
+     - Database records affected
+     - Error handling behavior
+
+3. **Verification Steps**
+   - Manual steps to confirm acceptance criteria
+   - Routes to visit
+   - Data to create or update
+
+4. **Build Validation**
+   - After acceptance criteria pass:
+     - Run `npm run build` or `npm start`
+     - If build fails:
+       - Fix errors
+       - Re-run build
+       - Repeat until successful
+
+---
+
+## Hosting Constraints (Webflow Cloud)
+
+- App must be compatible with Webflow Cloud deployment
+- No reliance on unsupported server features
+- Environment variables managed via Webflow Cloud config
+- Build output must succeed in production mode
+
+---
+
+## Completion Criteria
+
+A project is considered **Completed** when:
+- All Mini PRDs are marked Completed
+- All acceptance criteria are met
+- All tests pass
+- Production build succeeds
+
+---
+
+## Future Considerations (Out of Scope)
+
+- GitHub read/write sync
+- Multi-project linking
+- AI-assisted retrospectives

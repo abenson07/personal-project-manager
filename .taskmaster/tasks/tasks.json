@@ -1,0 +1,209 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Setup Next.js Project with Supabase Integration",
+        "description": "Initialize Next.js project with App Router, configure Supabase client, and set up basic project structure",
+        "details": "Create Next.js 14+ project with App Router enabled. Install and configure Supabase client library. Set up environment variables for Supabase URL and anon key. Create lib/supabase.js client configuration. Set up basic folder structure: app/(routes), components, lib, types. Configure TypeScript if not already enabled. Install required dependencies: @supabase/supabase-js, react, next.",
+        "testStrategy": "Verify Supabase connection with a simple query test. Test environment variable loading. Ensure Next.js app starts without errors using npm run dev.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js 14+ Project with App Router",
+            "description": "Create a new Next.js project with App Router enabled and configure basic project settings",
+            "dependencies": [],
+            "details": "Run 'npx create-next-app@latest project-name --typescript --tailwind --eslint --app' to create Next.js 14+ project with App Router. Configure next.config.js for optimal settings. Verify project structure includes app/ directory instead of pages/. Test initial setup by running 'npm run dev' and confirming the app loads at localhost:3000.",
+            "status": "done",
+            "testStrategy": "Verify Next.js app starts without errors using npm run dev. Check that App Router is properly configured by confirming app/ directory structure.",
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:26:34.665Z"
+          },
+          {
+            "id": 2,
+            "title": "Install and Configure Supabase Dependencies",
+            "description": "Install Supabase client library and set up environment configuration",
+            "dependencies": [
+              1
+            ],
+            "details": "Install @supabase/supabase-js using 'npm install @supabase/supabase-js'. Create .env.local file with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY variables. Add .env.local to .gitignore. Create .env.example file with placeholder values for team reference.",
+            "status": "done",
+            "testStrategy": "Verify environment variables load correctly by logging process.env values in a test component. Ensure .env.local is properly ignored by git.",
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:26:38.847Z"
+          },
+          {
+            "id": 3,
+            "title": "Create Supabase Client Configuration",
+            "description": "Set up Supabase client instance and connection utilities",
+            "dependencies": [
+              2
+            ],
+            "details": "Create lib/supabase.js (or .ts) file with createClient configuration using environment variables. Export supabase client instance for use throughout the application. Add error handling for missing environment variables. Create utility functions for common Supabase operations like authentication state management.",
+            "status": "done",
+            "testStrategy": "Test Supabase connection with a simple query or ping. Verify client instance is properly configured and can connect to the database.",
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:26:40.401Z"
+          },
+          {
+            "id": 4,
+            "title": "Establish Project Folder Structure",
+            "description": "Create organized folder structure for scalable Next.js application architecture",
+            "dependencies": [
+              1
+            ],
+            "details": "Create folder structure: app/(routes)/ for route groups, components/ for reusable UI components, lib/ for utilities and configurations, types/ for TypeScript definitions. Add index.ts files for clean imports. Create components/ui/ for base UI components and components/features/ for feature-specific components.",
+            "status": "done",
+            "testStrategy": "Verify folder structure is created correctly. Test that imports work properly from each directory. Ensure TypeScript can resolve paths correctly.",
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:26:42.806Z"
+          },
+          {
+            "id": 5,
+            "title": "Configure TypeScript and Validate Setup",
+            "description": "Ensure TypeScript is properly configured and validate the complete project setup [Updated: 1/11/2026]",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Verify tsconfig.json is properly configured with Next.js App Router settings. Add path mapping for clean imports (@/components, @/lib, etc.). Install additional type definitions if needed. Create a simple test component that uses Supabase client to verify the entire setup works. Run TypeScript compiler to check for any configuration issues.\n<info added on 2026-01-11T18:26:15.045Z>\nInstall Jest and React Testing Library for unit testing. Set up test configuration files (jest.config.js, setupTests.js). Create initial test files for components and utilities. Configure package.json test scripts. Run npm run build repeatedly, fixing any TypeScript errors, missing dependencies, or configuration issues until the build completes successfully without errors. Document any build optimizations or fixes applied during the process.\n</info added on 2026-01-11T18:26:15.045Z>",
+            "status": "done",
+            "testStrategy": "Run 'npm run build' to ensure TypeScript compilation succeeds. Create and test a simple component that imports from lib/supabase to verify the complete integration works. Check that all path mappings resolve correctly.",
+            "parentId": "undefined",
+            "updatedAt": "2026-01-11T18:27:11.036Z"
+          }
+        ],
+        "updatedAt": "2026-01-11T18:27:11.036Z"
+      },
+      {
+        "id": "2",
+        "title": "Create Supabase Database Schema and Tables",
+        "description": "Implement the complete database schema with all required tables, relationships, and constraints",
+        "details": "Create SQL migration scripts for all tables: projects (id uuid primary key, name text, phase enum, created_at, updated_at), project_notes (id, project_id fk, content text, created_at), assets (id, project_id fk, type enum, source text, annotation text, created_at), feature_sets (id, project_id fk, name text, description text), feature_versions (id, feature_set_id fk, version text, definition text), mini_prds (id, project_id fk, feature_set_id fk, version text, content text, status enum), mini_prd_tasks (id, mini_prd_id fk, type enum, description text, completed boolean), tests (id, mini_prd_id fk, test_type enum, description text). Set up proper foreign key constraints and indexes.",
+        "testStrategy": "Run migration scripts in Supabase dashboard. Verify all tables exist with correct columns and constraints. Test foreign key relationships by attempting to insert related records.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "3",
+        "title": "Implement TypeScript Types and Database Utilities",
+        "description": "Create TypeScript interfaces for all database entities and utility functions for database operations",
+        "details": "Create types/database.ts with interfaces for Project, ProjectNote, Asset, FeatureSet, FeatureVersion, MiniPRD, MiniPRDTask, Test. Define enums for ProjectPhase, AssetType, MiniPRDStatus, TaskType, TestType. Create lib/database.ts with utility functions for common CRUD operations: createProject, updateProject, getProjectsByPhase, createAsset, etc. Implement proper error handling and type safety.",
+        "testStrategy": "Unit tests for all database utility functions. Test type checking with TypeScript compiler. Verify CRUD operations work correctly with Supabase.",
+        "priority": "medium",
+        "dependencies": [
+          "2"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "4",
+        "title": "Build Dashboard View and Routing Structure",
+        "description": "Create the main dashboard at root route with project overview and navigation",
+        "details": "Create app/page.tsx for dashboard route (/). Implement dashboard components showing recently active projects, progress indicators (% Mini PRDs completed), and CTA for new project creation. Create shared layout with sidebar navigation. Implement project grouping by phase (Active, In Definition, Completed). Add routing utilities and navigation components. Style with modern CSS or Tailwind CSS.",
+        "testStrategy": "Route-level test verifying dashboard loads at /. Test project data fetching and display. Verify navigation links work correctly. Test responsive design basics.",
+        "priority": "high",
+        "dependencies": [
+          "3"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "5",
+        "title": "Implement Concept View with Asset Management",
+        "description": "Create the concept phase view with markdown editing and asset upload functionality",
+        "details": "Create app/projects/[projectId]/concept/page.tsx. Implement markdown editor for freeform notes using react-markdown or similar. Create asset upload functionality supporting both file uploads and URL pasting. Implement image preview and annotation features. Create vertical asset list in sidebar with truncated text. Add auto-save functionality for notes. Handle file storage via Supabase Storage or convert to base64 for database storage.",
+        "testStrategy": "Test route /projects/[id]/concept loads correctly. Verify markdown editing and saving. Test image upload and URL pasting. Verify asset list displays and updates. Test auto-save functionality.",
+        "priority": "medium",
+        "dependencies": [
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "6",
+        "title": "Build PRD Definition Mode with Tabbed Interface",
+        "description": "Create the PRD view with Summary, Full PRD, and Feature Sets tabs",
+        "details": "Create app/projects/[projectId]/prd/page.tsx with tabbed interface. Implement Summary tab with high-level project description editor. Create Full PRD tab with comprehensive markdown editor for scope, architecture, database needs. Build Feature Sets tab with AI extraction capability (mock AI initially). Add sidebar with inline notes and 'Refine' button functionality. Implement tab state management and URL hash routing for tabs.",
+        "testStrategy": "Test route /projects/[id]/prd loads with all tabs. Verify tab switching and content persistence. Test markdown editing in each tab. Verify sidebar notes functionality.",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "7",
+        "title": "Implement Feature Versioning and Mini PRD Generation",
+        "description": "Build feature versioning system and Mini PRD planning functionality",
+        "details": "Extend PRD view with versioning controls (MVP, V1, V2). Implement version locking mechanism - earlier versions lock when next version starts. Create 'Plan project' action that converts feature sets into Mini PRDs. Build Mini PRD grouping by version display. Implement AI-assisted feature extraction (initially mock with predefined logic). Add Mini PRD creation workflow with proper database relationships.",
+        "testStrategy": "Test feature version creation and locking behavior. Verify Mini PRD generation from feature sets. Test version grouping display. Verify database relationships are correctly established.",
+        "priority": "medium",
+        "dependencies": [
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "8",
+        "title": "Create Mini PRD Detail View with Task Management",
+        "description": "Build detailed Mini PRD view with acceptance criteria and task tracking",
+        "details": "Create app/projects/[projectId]/prd/[miniPrdId]/page.tsx. Implement Mini PRD content display with scope and acceptance criteria checklist. Build sidebar with human task checklist and dependencies section. Create status management (Planned, In Development, Ready for Review, Completed). Add automated test definitions section. Implement task completion tracking and progress indicators.",
+        "testStrategy": "Test route /projects/[id]/prd/[miniPrdId] loads correctly. Verify task management functionality. Test status updates and progress tracking. Verify acceptance criteria checklist behavior.",
+        "priority": "medium",
+        "dependencies": [
+          "7"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "9",
+        "title": "Build Sidebar Navigation and Project Phase Management",
+        "description": "Implement persistent sidebar navigation with project phase grouping and transitions",
+        "details": "Create persistent sidebar component with project grouping by phase (Active, In Definition, Completed). Implement phase transition logic and UI controls. Add version tags for projects in PRD phase (MVP, V1, etc.). Create project creation workflow and phase progression. Implement project search and filtering. Add responsive sidebar behavior for mobile compatibility.",
+        "testStrategy": "Test sidebar displays projects grouped by phase. Verify phase transitions work correctly. Test project creation and navigation. Verify responsive behavior on different screen sizes.",
+        "priority": "medium",
+        "dependencies": [
+          "8"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "10",
+        "title": "Implement Testing Framework and Build Validation",
+        "description": "Set up comprehensive testing suite and build validation processes",
+        "details": "Install and configure Jest and React Testing Library. Create unit tests for all utility functions and components. Implement integration tests for Supabase interactions. Add route-level tests for all views using Next.js testing utilities. Create build validation script that runs tests and verifies production build. Set up test coverage reporting. Add pre-commit hooks for test validation. Configure testing for Webflow Cloud deployment compatibility.",
+        "testStrategy": "Run full test suite with npm test. Verify all routes load correctly in tests. Test database operations in isolation. Ensure npm run build succeeds without errors. Verify test coverage meets minimum thresholds.",
+        "priority": "high",
+        "dependencies": [
+          "9"
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-01-11T18:27:11.036Z",
+      "taskCount": 10,
+      "completedCount": 1,
+      "tags": [
+        "master"
+      ]
+    }
+  }
+}
