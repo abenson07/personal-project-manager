@@ -26,9 +26,9 @@ export default function AssetSidebar({ assets, onAddAsset }: AssetSidebarProps) 
   }
 
   return (
-    <aside className="w-80 border-l border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <aside className="w-80 border-l border-gray-200 bg-white p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Assets</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Assets</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="rounded-lg bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
@@ -38,11 +38,11 @@ export default function AssetSidebar({ assets, onAddAsset }: AssetSidebarProps) 
       </div>
 
       {showAddForm && (
-        <form onSubmit={handleSubmit} className="mb-4 space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+        <form onSubmit={handleSubmit} className="mb-4 space-y-3 rounded-lg border border-gray-200 p-4">
           <select
             value={assetType}
             onChange={(e) => setAssetType(e.target.value as AssetType)}
-            className="w-full rounded border border-gray-300 p-2 dark:border-gray-600 dark:bg-gray-700"
+            className="w-full rounded border border-gray-300 p-2"
           >
             <option value={AssetType.IMAGE}>Image</option>
             <option value={AssetType.DOCUMENT}>Document</option>
@@ -54,14 +54,14 @@ export default function AssetSidebar({ assets, onAddAsset }: AssetSidebarProps) 
             value={assetSource}
             onChange={(e) => setAssetSource(e.target.value)}
             placeholder="URL or file path"
-            className="w-full rounded border border-gray-300 p-2 dark:border-gray-600 dark:bg-gray-700"
+            className="w-full rounded border border-gray-300 p-2"
             required
           />
           <textarea
             value={assetAnnotation}
             onChange={(e) => setAssetAnnotation(e.target.value)}
             placeholder="Annotation (optional)"
-            className="w-full rounded border border-gray-300 p-2 dark:border-gray-600 dark:bg-gray-700"
+            className="w-full rounded border border-gray-300 p-2"
             rows={2}
           />
           <button
@@ -75,23 +75,23 @@ export default function AssetSidebar({ assets, onAddAsset }: AssetSidebarProps) 
 
       <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
         {assets.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">No assets yet</p>
+          <p className="text-sm text-gray-500">No assets yet</p>
         ) : (
           assets.map((asset) => (
             <div
               key={asset.id}
-              className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+              className="rounded-lg border border-gray-200 p-3"
             >
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                <span className="text-xs font-medium text-gray-600">
                   {asset.type}
                 </span>
               </div>
-              <div className="mb-2 truncate text-sm text-gray-900 dark:text-gray-100">
+              <div className="mb-2 truncate text-sm text-gray-900">
                 {asset.source}
               </div>
               {asset.annotation && (
-                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                <p className="text-xs text-gray-600 line-clamp-2">
                   {asset.annotation}
                 </p>
               )}

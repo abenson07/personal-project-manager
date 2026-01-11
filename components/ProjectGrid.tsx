@@ -11,7 +11,7 @@ interface ProjectGridProps {
 export default function ProjectGrid({ projects, phase }: ProjectGridProps) {
   if (projects.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
+      <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-gray-500">
         No projects in {phase} phase
       </div>
     )

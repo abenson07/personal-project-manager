@@ -2,8 +2,9 @@
 
 export const routes = {
   home: '/',
-  projectConcept: (projectId: string) => `/projects/${projectId}/concept`,
-  projectPRD: (projectId: string) => `/projects/${projectId}/prd`,
+  project: (projectId: string, view: 'notes' | 'prd' = 'notes') => `/projects/${projectId}?view=${view}`,
+  projectConcept: (projectId: string) => `/projects/${projectId}?view=notes`,
+  projectPRD: (projectId: string) => `/projects/${projectId}?view=prd`,
   miniPRD: (projectId: string, miniPRDId: string) => `/projects/${projectId}/prd/${miniPRDId}`,
 } as const
 
