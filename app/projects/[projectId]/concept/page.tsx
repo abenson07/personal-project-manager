@@ -93,8 +93,7 @@ export default function ConceptPage() {
             initialValue={project.name}
             onUpdate={handleProjectUpdate}
             className="text-3xl font-bold"
-          />{' '}
-          - Concept
+          />
         </h1>
         <MarkdownEditor
           value={currentNote}
