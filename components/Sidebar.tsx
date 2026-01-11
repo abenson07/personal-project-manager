@@ -14,27 +14,43 @@ export default function Sidebar() {
   const [completedProjects, setCompletedProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
 
+  const loadProjects = async () => {
+    try {
+      const [active, planned, completed] = await Promise.all([
+        getProjectsByPhase(ProjectPhase.PRD),
+        getProjectsByPhase(ProjectPhase.CONCEPT),
+        getProjectsByPhase(ProjectPhase.COMPLETED),
+      ])
+      
+      setActiveProjects(active)
+      setPlannedProjects(planned)
+      setCompletedProjects(completed)
+    } catch (error) {
+      console.error('Failed to load projects:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const [active, planned, completed] = await Promise.all([
-          getProjectsByPhase(ProjectPhase.PRD),
-          getProjectsByPhase(ProjectPhase.CONCEPT),
-          getProjectsByPhase(ProjectPhase.COMPLETED),
-        ])
-        
-        setActiveProjects(active)
-        setPlannedProjects(planned)
-        setCompletedProjects(completed)
-      } catch (error) {
-        console.error('Failed to load projects:', error)
-      } finally {
-        setLoading(false)
-      }
+    loadProjects()
+
+    // Listen for project updates
+    const handleProjectUpdate = () => {
+      loadProjects()
     }
 
-    loadProjects()
-  }, [])
+    window.addEventListener('projectUpdated', handleProjectUpdate)
+    
+    // Also refresh when pathname changes (user navigates)
+    if (pathname) {
+      loadProjects()
+    }
+
+    return () => {
+      window.removeEventListener('projectUpdated', handleProjectUpdate)
+    }
+  }, [pathname])
 
   const ProjectGroup = ({ title, projects, phase }: { title: string; projects: Project[]; phase: ProjectPhase }) => {
     const isActive = pathname?.startsWith(`/projects/`) && 
