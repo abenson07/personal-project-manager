@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { getProjectById, getFeatureSetsByProject } from '@/lib/database'
 import type { Project, FeatureSet } from '@/types/database'
 import MarkdownEditor from '@/components/MarkdownEditor'
+import EditableTitle from '@/components/EditableTitle'
 
 export default function PRDPage() {
   const params = useParams()
@@ -47,10 +48,23 @@ export default function PRDPage() {
     return <div className="p-8">Project not found</div>
   }
 
+  const handleProjectUpdate = async () => {
+    const updatedProject = await getProjectById(projectId)
+    if (updatedProject) {
+      setProject(updatedProject)
+    }
+  }
+
   return (
     <div className="p-8">
       <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-100">
-        {project.name} - PRD
+        <EditableTitle
+          projectId={projectId}
+          initialValue={project.name}
+          onUpdate={handleProjectUpdate}
+          className="text-3xl font-bold"
+        />{' '}
+        - PRD
       </h1>
 
       <div className="mb-6 flex gap-2 border-b border-gray-200 dark:border-gray-700">

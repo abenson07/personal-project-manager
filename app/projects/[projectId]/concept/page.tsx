@@ -6,6 +6,7 @@ import { getProjectById, getProjectNotes, createProjectNote, getAssetsByProject,
 import type { Project, ProjectNote, Asset } from '@/types/database'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import AssetSidebar from '@/components/AssetSidebar'
+import EditableTitle from '@/components/EditableTitle'
 
 export default function ConceptPage() {
   const params = useParams()
@@ -76,11 +77,24 @@ export default function ConceptPage() {
     return <div className="p-8">Project not found</div>
   }
 
+  const handleProjectUpdate = async () => {
+    const updatedProject = await getProjectById(projectId)
+    if (updatedProject) {
+      setProject(updatedProject)
+    }
+  }
+
   return (
     <div className="flex h-full">
       <div className="flex-1 p-8">
         <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-100">
-          {project.name} - Concept
+          <EditableTitle
+            projectId={projectId}
+            initialValue={project.name}
+            onUpdate={handleProjectUpdate}
+            className="text-3xl font-bold"
+          />{' '}
+          - Concept
         </h1>
         <MarkdownEditor
           value={currentNote}
