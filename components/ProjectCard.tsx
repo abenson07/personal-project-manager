@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Project, ProjectPhase } from '@/types/database'
+import { Project } from '@/types/database'
 
 interface ProjectCardProps {
   project: Project
@@ -9,10 +9,10 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, progress = 0 }: ProjectCardProps) {
-  const phaseColors = {
-    [ProjectPhase.CONCEPT]: 'bg-gray-100 text-gray-800',
-    [ProjectPhase.PRD]: 'bg-blue-100 text-blue-800',
-    [ProjectPhase.COMPLETED]: 'bg-green-100 text-green-800',
+  const statusColors: Record<Project['status'], string> = {
+    planning: 'bg-blue-100 text-blue-800',
+    in_progress: 'bg-orange-100 text-orange-800',
+    complete: 'bg-green-100 text-green-800',
   }
 
   return (
@@ -25,9 +25,9 @@ export default function ProjectCard({ project, progress = 0 }: ProjectCardProps)
           {project.name}
         </h3>
         <span
-          className={`rounded-full px-3 py-1 text-xs font-medium ${phaseColors[project.phase]}`}
+          className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[project.status] || 'bg-gray-100 text-gray-800'}`}
         >
-          {project.phase}
+          {project.status}
         </span>
       </div>
       

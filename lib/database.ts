@@ -8,7 +8,11 @@ import type {
   MiniPRD,
   MiniPRDTask,
   Test,
-  PRDNote
+  PRDNote,
+  Subproject,
+  Note,
+  TaskComment,
+  TaskStatus
 } from '@/types/database'
 import {
   ProjectPhase,
@@ -80,7 +84,7 @@ export async function getProjectsByPhase(phase: ProjectPhase): Promise<Project[]
   }
 }
 
-export async function updateProject(id: string, updates: Partial<Pick<Project, 'name' | 'phase'>>): Promise<Project> {
+export async function updateProject(id: string, updates: Partial<Pick<Project, 'name' | 'status'>>): Promise<Project> {
   try {
     const { data, error } = await supabase
       .from('projects')

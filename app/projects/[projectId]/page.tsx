@@ -200,7 +200,8 @@ function ProjectPageContent() {
         {/* Header Section */}
         <div className="border-b border-gray-200 px-8 py-6">
           <div className="mb-4">
-            <StatusProcessFlow currentPhase={project.phase} />
+            {/* TODO: Update StatusProcessFlow to use status instead of phase */}
+            {/* <StatusProcessFlow currentPhase={project.status} /> */}
           </div>
           
           <div className="mb-2 flex items-center justify-between">

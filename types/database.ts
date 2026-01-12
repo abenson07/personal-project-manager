@@ -1,10 +1,9 @@
-// Database entity interfaces matching Supabase schema
+// Database entity interfaces matching Supabase schema (Task 2/3)
 
 export interface Project {
   id: string
   name: string
-  phase: ProjectPhase // Deprecated, use status instead
-  status: ProjectStatus // New field
+  status: 'planning' | 'in_progress' | 'complete'
   created_at: string
   updated_at: string
 }
@@ -79,14 +78,14 @@ export interface PRDNote {
   created_at: string
 }
 
-// New subproject model interfaces
+// Task 2/3 subproject model interfaces
 export interface Subproject {
   id: string
   project_id: string
   name: string
-  mode: SubprojectMode
-  prd_markdown: string | null
-  tasks_markdown: string | null
+  mode: 'planned' | 'build' | 'complete'
+  prd_markdown?: string
+  tasks_markdown?: string
   created_at: string
   updated_at: string
 }
@@ -94,27 +93,25 @@ export interface Subproject {
 export interface Note {
   id: string
   subproject_id: string
-  type: NoteType
+  type: 'text' | 'image'
   content: string
   created_at: string
-}
-
-export interface Task {
-  id: string
-  subproject_id: string
-  markdown_id: string
-  title: string
-  description: string | null
-  status: TaskStatus
-  created_at: string
-  updated_at: string
 }
 
 export interface TaskComment {
   id: string
+  subproject_id: string
   task_id: string
   content: string
   created_at: string
+}
+
+export interface TaskStatus {
+  id: string
+  subproject_id: string
+  task_id: string
+  status: 'todo' | 'in_progress' | 'done'
+  updated_at: string
 }
 
 // Enum types matching database enums
@@ -175,7 +172,9 @@ export enum SubprojectMode {
   COMPLETE = 'complete'
 }
 
-export enum TaskStatus {
+// TaskStatus enum removed - using string literals in TaskStatus interface instead
+// Legacy enum kept for backward compatibility (deprecated)
+export enum TaskStatusEnum {
   TODO = 'todo',
   IN_PROGRESS = 'in_progress',
   DONE = 'done'
