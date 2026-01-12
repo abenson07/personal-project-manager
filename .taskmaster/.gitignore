@@ -1,0 +1,11 @@
+# Taskmaster generated files
+tasks/tasks.json
+tasks/*.json
+
+# Temporary PRD files
+docs/*-prd.txt
+docs/temp-*
+
+# Keep the main PRD
+!docs/prd.txt
+
