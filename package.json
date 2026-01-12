@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check-supabase": "node scripts/check-supabase.js",
+    "migrate": "node scripts/migrate.js",
+    "migrate:generate": "node scripts/migrate-direct.js"
   },
   "dependencies": {
     "next": "16.1.1",
@@ -14,10 +17,12 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.90.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^16.6.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",
