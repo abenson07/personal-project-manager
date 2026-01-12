@@ -5,12 +5,17 @@ import { useParams, useRouter } from 'next/navigation'
 import { 
   getSubprojectById,
   updateSubprojectMode,
-  getProjectById
+  updateSubprojectMarkdown,
+  getProjectById,
+  getNotesForSubproject
 } from '@/lib/database'
 import type { Subproject, Project } from '@/types/database'
+import { letsBuildIt } from '@/lib/taskmaster'
 import Breadcrumb from '@/components/Breadcrumb'
 import NoteInput from '@/components/NoteInput'
 import NoteTimeline from '@/components/NoteTimeline'
+import ConfirmationDialog from '@/components/ConfirmationDialog'
+import LoadingProgress from '@/components/LoadingProgress'
 import { Rocket } from 'lucide-react'
 
 function SubprojectPageContent() {
@@ -25,6 +30,16 @@ function SubprojectPageContent() {
   const [error, setError] = useState<string | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generationStep, setGenerationStep] = useState(0)
+  const [generationSteps] = useState([
+    'Aggregating notes...',
+    'Generating PRD...',
+    'Generating tasks...',
+    'Saving to database...',
+    'Complete!',
+  ])
 
   const loadData = async () => {
     try {
@@ -67,19 +82,55 @@ function SubprojectPageContent() {
   }
 
   const handleLetsBuildIt = async () => {
-    if (!subproject || isTransitioning) return
+    if (!subproject || isTransitioning || isGenerating) return
 
-    setIsTransitioning(true)
+    // Show confirmation dialog
+    setShowConfirmation(true)
+  }
+
+  const confirmLetsBuildIt = async () => {
+    if (!subproject) return
+
+    setShowConfirmation(false)
+    setIsGenerating(true)
+    setGenerationStep(0)
+
     try {
-      const updated = await updateSubprojectMode(subproject.id, 'build')
+      // Step 1: Aggregate notes
+      setGenerationStep(1)
+      const notes = await getNotesForSubproject(subprojectId)
+      
+      if (notes.length === 0) {
+        throw new Error('No notes available. Please add some notes before generating PRD.')
+      }
+
+      // Step 2: Generate PRD
+      setGenerationStep(2)
+      const { prdMarkdown, tasksMarkdown } = await letsBuildIt(subprojectId, notes)
+
+      // Step 3: Save to database and update mode
+      setGenerationStep(3)
+      const updated = await updateSubprojectMarkdown(
+        subproject.id,
+        prdMarkdown,
+        tasksMarkdown,
+        'build'
+      )
+      
       setSubproject(updated)
-      // Optionally reload to show build mode interface
-      // For now, we'll just update the mode
+      setGenerationStep(4)
+
+      // Small delay to show completion
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Reload to show build mode interface
+      router.refresh()
     } catch (err) {
-      console.error('Failed to transition to build mode:', err)
-      alert('Failed to transition to build mode. Please try again.')
-    } finally {
-      setIsTransitioning(false)
+      console.error('Failed to generate PRD and tasks:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate PRD and tasks. Please try again.'
+      alert(errorMessage)
+      setIsGenerating(false)
+      setGenerationStep(0)
     }
   }
 
@@ -140,11 +191,11 @@ function SubprojectPageContent() {
               </div>
               <button
                 onClick={handleLetsBuildIt}
-                disabled={isTransitioning}
+                disabled={isTransitioning || isGenerating}
                 className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap"
               >
                 <Rocket className="h-5 w-5" />
-                {isTransitioning ? 'Transitioning...' : "Let's Build It"}
+                {isGenerating ? 'Generating...' : "Let's Build It"}
               </button>
             </div>
           </div>
@@ -163,6 +214,28 @@ function SubprojectPageContent() {
               refreshTrigger={refreshTrigger}
             />
           </div>
+
+          {/* Loading Progress */}
+          {isGenerating && (
+            <div className="mb-8">
+              <LoadingProgress
+                currentStep={generationSteps[generationStep]}
+                steps={generationSteps}
+                currentStepIndex={generationStep}
+              />
+            </div>
+          )}
+
+          {/* Confirmation Dialog */}
+          <ConfirmationDialog
+            isOpen={showConfirmation}
+            title="Let's Build It!"
+            message="This will generate a PRD and task breakdown from your notes using Taskmaster. This may take a few moments. Continue?"
+            confirmText="Generate PRD & Tasks"
+            cancelText="Cancel"
+            onConfirm={confirmLetsBuildIt}
+            onCancel={() => setShowConfirmation(false)}
+          />
         </div>
       </div>
     )

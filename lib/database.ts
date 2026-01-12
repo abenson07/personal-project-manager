@@ -630,6 +630,35 @@ export async function updateSubprojectMode(
 }
 
 /**
+ * Update subproject with PRD and tasks markdown (Task 7)
+ */
+export async function updateSubprojectMarkdown(
+  id: string,
+  prdMarkdown: string,
+  tasksMarkdown: string,
+  mode: 'planned' | 'build' | 'complete' = 'build'
+): Promise<Subproject> {
+  try {
+    const { data, error } = await supabase
+      .from('subprojects')
+      .update({ 
+        prd_markdown: prdMarkdown,
+        tasks_markdown: tasksMarkdown,
+        mode 
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw new DatabaseError(error.message, error.code, error.details)
+    return data
+  } catch (error) {
+    if (error instanceof DatabaseError) throw error
+    throw new DatabaseError('Failed to update subproject markdown', undefined, String(error))
+  }
+}
+
+/**
  * Get all notes for a subproject (Task 3)
  */
 export async function getNotesForSubproject(subprojectId: string): Promise<Note[]> {
