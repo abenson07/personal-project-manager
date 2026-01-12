@@ -7,7 +7,8 @@ import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
-    const { notes, subprojectId } = await request.json()
+    const body = await request.json() as { notes: Array<{ created_at: string; content: string }>; subprojectId: string }
+    const { notes, subprojectId } = body
 
     if (!notes || !Array.isArray(notes) || notes.length === 0) {
       return NextResponse.json(
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     // Aggregate notes into PRD format
     const notesContent = notes
-      .map((note: any, index: number) => {
+      .map((note, index) => {
         const timestamp = new Date(note.created_at).toISOString()
         return `## Note ${index + 1} (${timestamp})\n\n${note.content}`
       })

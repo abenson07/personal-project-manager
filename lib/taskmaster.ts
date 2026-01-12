@@ -39,8 +39,6 @@ export async function generatePRD(
     throw new Error(error.error || 'Failed to generate PRD')
   }
 
-  const result = await response.json()
-  
   // TODO: When Taskmaster MCP is integrated, this will return the actual PRD markdown
   // For now, return a placeholder
   return `# PRD Generated for Subproject ${subprojectId}\n\n${aggregateNotesForPRD(notes)}\n\n[PRD generation via Taskmaster pending]`
