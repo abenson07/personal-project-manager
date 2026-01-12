@@ -294,7 +294,7 @@
         "dependencies": [
           3
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -302,7 +302,7 @@
             "description": "Implement the ProjectCard component that displays individual project information in the list view",
             "dependencies": [],
             "details": "Create a reusable ProjectCard component in /components/ProjectCard.tsx that displays project name, status badge using ProjectStatusBadge component, and navigation link to project detail page. Include hover effects and responsive design using Tailwind CSS. The card should handle click events to navigate to the project detail view.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test component renders correctly with different project data, navigation link works properly, hover effects are applied, and responsive design adapts to different screen sizes"
           },
           {

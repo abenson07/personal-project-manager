@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Project } from '@/types/database'
+import ProjectStatusBadge from './ProjectStatusBadge'
 
 interface ProjectCardProps {
   project: Project
@@ -9,26 +10,16 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, progress = 0 }: ProjectCardProps) {
-  const statusColors: Record<Project['status'], string> = {
-    planning: 'bg-blue-100 text-blue-800',
-    in_progress: 'bg-orange-100 text-orange-800',
-    complete: 'bg-green-100 text-green-800',
-  }
-
   return (
     <Link
-      href={`/projects/${project.id}?view=notes`}
+      href={`/projects/${project.id}`}
       className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
     >
       <div className="mb-4 flex items-start justify-between">
         <h3 className="text-lg font-semibold text-gray-900">
           {project.name}
         </h3>
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[project.status] || 'bg-gray-100 text-gray-800'}`}
-        >
-          {project.status}
-        </span>
+        <ProjectStatusBadge status={project.status} />
       </div>
       
       {progress > 0 && (
