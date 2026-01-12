@@ -384,7 +384,7 @@
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -392,7 +392,7 @@
             "description": "Create the main project detail page with proper dynamic routing and error handling for invalid project IDs",
             "dependencies": [],
             "details": "Implement `/app/projects/[projectId]/page.tsx` with dynamic route parameter extraction using `useParams()`. Add error boundaries to handle cases where projectId is invalid or project doesn't exist. Include proper TypeScript typing for route parameters and implement loading states with React Suspense.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test with valid and invalid project IDs, verify error boundaries catch and display appropriate error messages, and confirm loading states display correctly"
           },
           {
@@ -403,7 +403,7 @@
               1
             ],
             "details": "Create `SubprojectCard` component showing subproject name, mode badge, and navigation link. Implement mode indicators: Planned (blue badge with 'Planning' text), Build (orange badge with 'Building' text), Complete (green badge with 'Complete' text). Include click navigation to subproject detail page and proper hover states.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify all three mode badges display with correct colors and text, navigation links work properly, and component renders correctly for different subproject states"
           },
           {
@@ -414,7 +414,7 @@
               1
             ],
             "details": "Build `AddSubprojectForm` component with inline creation functionality. Include form validation using react-hook-form, input field for subproject name, and submit handling that creates new subproject and updates the UI. Add proper error handling and success feedback. Form should reset after successful submission.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test form validation works correctly, successful subproject creation updates the list immediately, error states display properly, and form resets after submission"
           },
           {
@@ -425,7 +425,7 @@
               1
             ],
             "details": "Create project header component showing project name and overall status badge. Implement breadcrumb navigation component with links: Home > Projects > [Project Name]. Include proper styling with Tailwind CSS and ensure responsive design. Header should update dynamically when project status changes.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify project header displays correct information, breadcrumb navigation links work properly, responsive design functions on mobile and desktop, and status updates reflect correctly"
           },
           {
@@ -437,7 +437,7 @@
               3
             ],
             "details": "Implement real-time updates using Supabase subscriptions to listen for subproject mode changes. Update parent project status calculation logic: Planning (all subprojects planned), In Progress (at least one building), Complete (all complete). Ensure UI updates immediately when subproject modes change without page refresh.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test that project status updates automatically when subproject modes change, verify real-time subscriptions work correctly, and confirm status calculation logic is accurate for all scenarios"
           },
           {
@@ -452,7 +452,7 @@
               5
             ],
             "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
           },
           {
@@ -463,7 +463,7 @@
               6
             ],
             "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
           }
         ]
