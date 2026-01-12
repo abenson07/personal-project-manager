@@ -1,0 +1,949 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Setup and Development Environment Configuration",
+        "description": "Initialize Next.js project with App Router, configure TypeScript, ESLint, Tailwind CSS, and set up development environment with proper folder structure",
+        "details": "Create Next.js 14+ project using `npx create-next-app@latest --typescript --tailwind --eslint --app`. Configure project structure: /app for routes, /components for reusable UI, /lib for utilities, /types for TypeScript definitions. Set up absolute imports with @ alias. Install additional dependencies: @supabase/supabase-js@^2.39.0, react-markdown@^9.0.1, remark-gfm@^4.0.0, lucide-react@^0.303.0 for icons. Configure environment variables for Supabase connection.",
+        "testStrategy": "Verify project builds successfully with `npm run build`, TypeScript compilation passes, and development server starts without errors. Test absolute imports work correctly.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js Project with Core Configuration",
+            "description": "Create a new Next.js 14+ project with TypeScript, Tailwind CSS, and ESLint using the App Router architecture",
+            "dependencies": [],
+            "details": "Run `npx create-next-app@latest --typescript --tailwind --eslint --app` to create the project. Verify the project structure includes the /app directory for App Router, TypeScript configuration files (tsconfig.json), Tailwind CSS setup (tailwind.config.js), and ESLint configuration (.eslintrc.json). Ensure all initial dependencies are properly installed and the project can start successfully.",
+            "status": "pending",
+            "testStrategy": "Verify project creation by running `npm run dev` and accessing localhost:3000. Check that TypeScript compilation works without errors and Tailwind CSS styles are applied correctly."
+          },
+          {
+            "id": 2,
+            "title": "Configure Project Folder Structure and Absolute Imports",
+            "description": "Set up the recommended folder structure and configure absolute imports with @ alias for better code organization",
+            "dependencies": [
+              1
+            ],
+            "details": "Create the following folder structure: /app for routes, /components for reusable UI components, /lib for utility functions, /types for TypeScript type definitions. Configure absolute imports by updating tsconfig.json to include path mapping with '@/*': ['./*'] to enable imports like '@/components/Button'. Create index.ts files in each directory for better import organization.",
+            "status": "pending",
+            "testStrategy": "Test absolute imports by creating a sample component and importing it using the @ alias. Verify that IDE autocomplete works correctly and imports resolve properly during build."
+          },
+          {
+            "id": 3,
+            "title": "Install and Configure Additional Dependencies",
+            "description": "Install required packages for Supabase integration, markdown rendering, and UI icons",
+            "dependencies": [
+              2
+            ],
+            "details": "Install the following packages: @supabase/supabase-js@^2.39.0 for database integration, react-markdown@^9.0.1 for markdown rendering, remark-gfm@^4.0.0 for GitHub Flavored Markdown support, and lucide-react@^0.303.0 for consistent icon usage. Update package.json and verify all dependencies are compatible with the Next.js version.",
+            "status": "pending",
+            "testStrategy": "Verify installation by importing each package in a test file and ensuring no TypeScript errors occur. Check that all packages are listed in package.json with correct versions."
+          },
+          {
+            "id": 4,
+            "title": "Set Up Environment Variables Configuration",
+            "description": "Configure environment variables for Supabase connection and other external services",
+            "dependencies": [
+              3
+            ],
+            "details": "Create .env.local file with Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. Add .env.local to .gitignore to prevent committing sensitive data. Create .env.example file with placeholder values for team reference. Set up environment variable validation using a configuration utility in /lib/config.ts.",
+            "status": "pending",
+            "testStrategy": "Verify environment variables are loaded correctly by creating a simple test that accesses process.env values. Ensure .env.local is ignored by git and .env.example is tracked."
+          },
+          {
+            "id": 5,
+            "title": "Validate Complete Development Environment Setup",
+            "description": "Perform comprehensive testing of the entire development environment configuration",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Run full project validation including: `npm run build` to ensure production build works, `npm run lint` to verify ESLint configuration, TypeScript compilation check with `npx tsc --noEmit`, and development server startup test. Create a sample page using absolute imports, Tailwind CSS classes, and Lucide React icons to verify all configurations work together.",
+            "status": "pending",
+            "testStrategy": "Execute all build commands successfully, verify no TypeScript errors, confirm ESLint passes, and test that a sample component renders correctly with all configured tools working in harmony."
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Supabase Database Setup and Schema Implementation",
+        "description": "Set up Supabase project, create database tables for projects, subprojects, notes, and task comments with proper relationships and constraints",
+        "details": "Create Supabase project and configure database schema:\n\n```sql\n-- Projects table\nCREATE TABLE projects (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  name TEXT NOT NULL,\n  status TEXT CHECK (status IN ('planning', 'in_progress', 'complete')) DEFAULT 'planning',\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n\n-- Subprojects table\nCREATE TABLE subprojects (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  project_id UUID REFERENCES projects(id) ON DELETE CASCADE,\n  name TEXT NOT NULL,\n  mode TEXT CHECK (mode IN ('planned', 'build', 'complete')) DEFAULT 'planned',\n  prd_markdown TEXT,\n  tasks_markdown TEXT,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n\n-- Notes table\nCREATE TABLE notes (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  subproject_id UUID REFERENCES subprojects(id) ON DELETE CASCADE,\n  type TEXT CHECK (type IN ('text', 'image')) DEFAULT 'text',\n  content TEXT NOT NULL,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n\n-- Task comments table\nCREATE TABLE task_comments (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  subproject_id UUID REFERENCES subprojects(id) ON DELETE CASCADE,\n  task_id TEXT NOT NULL,\n  content TEXT NOT NULL,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n\n-- Task status table (UI state only)\nCREATE TABLE task_status (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  subproject_id UUID REFERENCES subprojects(id) ON DELETE CASCADE,\n  task_id TEXT NOT NULL,\n  status TEXT CHECK (status IN ('todo', 'in_progress', 'done')) DEFAULT 'todo',\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  UNIQUE(subproject_id, task_id)\n);\n```\n\nEnable Row Level Security and create policies for authenticated access.",
+        "testStrategy": "Verify all tables are created successfully, foreign key constraints work, check constraints prevent invalid data, and RLS policies allow proper data access. Test CRUD operations through Supabase dashboard.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Supabase Project and Initial Configuration",
+            "description": "Set up new Supabase project, obtain API keys, and configure basic project settings",
+            "dependencies": [],
+            "details": "Create a new Supabase project through the dashboard, configure project name and region, obtain the project URL and anon key, set up environment variables for local development, and verify project is accessible",
+            "status": "pending",
+            "testStrategy": "Verify project creation through Supabase dashboard, test API connectivity using project URL and keys, confirm environment variables are properly configured"
+          },
+          {
+            "id": 2,
+            "title": "Create Core Database Tables with Relationships",
+            "description": "Execute SQL schema to create projects, subprojects, notes, task_comments, and task_status tables with proper constraints",
+            "dependencies": [
+              1
+            ],
+            "details": "Run the provided SQL schema in Supabase SQL editor to create all five tables (projects, subprojects, notes, task_comments, task_status) with UUID primary keys, foreign key relationships, check constraints for status fields, and proper cascade delete behavior",
+            "status": "pending",
+            "testStrategy": "Verify all tables are created successfully in Supabase dashboard, test foreign key constraints by attempting invalid inserts, validate check constraints prevent invalid status values"
+          },
+          {
+            "id": 3,
+            "title": "Configure Row Level Security Policies",
+            "description": "Enable RLS on all tables and create authentication-based access policies for secure data access",
+            "dependencies": [
+              2
+            ],
+            "details": "Enable Row Level Security on all five tables, create policies for authenticated users to perform CRUD operations on their own data, set up policies that respect the hierarchical relationship between projects, subprojects, and related entities",
+            "status": "pending",
+            "testStrategy": "Test RLS policies by attempting data access with and without authentication, verify users can only access their own data, confirm cascade permissions work correctly through the hierarchy"
+          },
+          {
+            "id": 4,
+            "title": "Create Database Indexes for Performance Optimization",
+            "description": "Add strategic indexes on foreign keys and frequently queried columns to optimize database performance",
+            "dependencies": [
+              3
+            ],
+            "details": "Create indexes on foreign key columns (project_id in subprojects, subproject_id in notes/task_comments/task_status), add indexes on frequently queried fields like status columns and created_at timestamps, create composite indexes for common query patterns",
+            "status": "pending",
+            "testStrategy": "Verify indexes are created successfully in Supabase dashboard, test query performance improvements using EXPLAIN ANALYZE, confirm no negative impact on insert/update operations"
+          },
+          {
+            "id": 5,
+            "title": "Test Database Schema with Sample Data and CRUD Operations",
+            "description": "Validate complete database setup by inserting sample data and testing all CRUD operations through Supabase dashboard",
+            "dependencies": [
+              4
+            ],
+            "details": "Insert sample projects, subprojects, notes, task comments, and task status records through Supabase dashboard, test all CRUD operations (Create, Read, Update, Delete), verify foreign key relationships work correctly, test cascade deletes, and validate all constraints",
+            "status": "pending",
+            "testStrategy": "Successfully insert sample data for all tables, perform update and delete operations, verify cascade deletes remove related records, test constraint violations are properly rejected, confirm data integrity is maintained"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Supabase Client Configuration and Database Utilities",
+        "description": "Configure Supabase client, create database utility functions, and implement TypeScript types for all data models",
+        "details": "Create `/lib/supabase.ts` with Supabase client configuration using environment variables. Implement TypeScript interfaces in `/types/database.ts`:\n\n```typescript\nexport interface Project {\n  id: string;\n  name: string;\n  status: 'planning' | 'in_progress' | 'complete';\n  created_at: string;\n  updated_at: string;\n}\n\nexport interface Subproject {\n  id: string;\n  project_id: string;\n  name: string;\n  mode: 'planned' | 'build' | 'complete';\n  prd_markdown?: string;\n  tasks_markdown?: string;\n  created_at: string;\n  updated_at: string;\n}\n\nexport interface Note {\n  id: string;\n  subproject_id: string;\n  type: 'text' | 'image';\n  content: string;\n  created_at: string;\n}\n\nexport interface TaskComment {\n  id: string;\n  subproject_id: string;\n  task_id: string;\n  content: string;\n  created_at: string;\n}\n\nexport interface TaskStatus {\n  id: string;\n  subproject_id: string;\n  task_id: string;\n  status: 'todo' | 'in_progress' | 'done';\n  updated_at: string;\n}\n```\n\nCreate database utility functions in `/lib/database.ts` for common operations like fetching projects with subproject counts, calculating project status based on subproject modes, etc.",
+        "testStrategy": "Test Supabase client connection, verify TypeScript types match database schema, test utility functions return correct data structures, and ensure environment variables are properly loaded.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Supabase Client Configuration",
+            "description": "Set up Supabase client configuration with environment variables and connection settings",
+            "dependencies": [],
+            "details": "Create `/lib/supabase.ts` file with Supabase client initialization using createClient from @supabase/supabase-js. Configure with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables. Include proper TypeScript typing and error handling for connection issues.",
+            "status": "pending",
+            "testStrategy": "Test Supabase client connection by attempting to query a simple table, verify environment variables are loaded correctly, and ensure client instance is properly exported"
+          },
+          {
+            "id": 2,
+            "title": "Implement TypeScript Database Interfaces",
+            "description": "Create comprehensive TypeScript interfaces for all database models and types",
+            "dependencies": [
+              1
+            ],
+            "details": "Create `/types/database.ts` file with TypeScript interfaces for Project, Subproject, Note, TaskComment, and TaskStatus models. Include all required fields with proper typing for status enums, timestamps, and optional fields. Add utility types for database operations like insert/update payloads.",
+            "status": "pending",
+            "testStrategy": "Verify TypeScript interfaces match database schema exactly, test type checking works for all model properties, and ensure enum values align with database constraints"
+          },
+          {
+            "id": 3,
+            "title": "Create Project Database Utility Functions",
+            "description": "Implement database utility functions for project-related operations and queries",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create `/lib/database.ts` with utility functions for project operations: fetchProjectsWithSubprojectCounts(), getProjectById(), createProject(), updateProjectStatus(). Include proper error handling, TypeScript typing, and optimized queries using Supabase client joins and aggregations.",
+            "status": "pending",
+            "testStrategy": "Test all project utility functions return correct data structures, verify subproject counts are accurate, test error handling for invalid IDs, and ensure TypeScript types are properly inferred"
+          },
+          {
+            "id": 4,
+            "title": "Implement Subproject and Task Database Operations",
+            "description": "Create database utility functions for subproject, note, and task-related operations",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Extend `/lib/database.ts` with functions for subproject operations: getSubprojectsByProjectId(), createSubproject(), updateSubprojectMode(), getNotesForSubproject(), createNote(), getTaskCommentsForSubproject(), createTaskComment(), updateTaskStatus(). Include proper relationship handling and cascading operations.",
+            "status": "pending",
+            "testStrategy": "Test subproject CRUD operations work correctly, verify foreign key relationships are maintained, test note and comment creation/retrieval, and ensure task status updates persist properly"
+          },
+          {
+            "id": 5,
+            "title": "Create Project Status Calculation Logic",
+            "description": "Implement utility functions for calculating and updating project status based on subproject modes",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Add status calculation functions to `/lib/database.ts`: calculateProjectStatus(), updateProjectStatusFromSubprojects(), getProjectProgress(). Implement logic where project status is 'planning' if all subprojects are 'planned', 'in_progress' if any are 'build', and 'complete' if all are 'complete'. Include progress percentage calculations.",
+            "status": "pending",
+            "testStrategy": "Test project status calculation logic with various subproject mode combinations, verify automatic status updates trigger correctly, test progress percentage calculations are accurate, and ensure status changes propagate properly"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Project List View Implementation",
+        "description": "Create the main project list page showing all projects with their status and a create new project functionality",
+        "details": "Implement `/app/page.tsx` as the project list view. Create components:\n\n- `ProjectCard` component displaying project name, status badge, and navigation link\n- `CreateProjectModal` component with form validation using react-hook-form\n- `ProjectStatusBadge` component with color-coded status indicators\n\nImplement project status calculation logic:\n- Planning: all subprojects in planned mode\n- In Progress: at least one subproject in build mode  \n- Complete: all subprojects complete\n\nUse Tailwind CSS for responsive grid layout. Implement optimistic updates for project creation. Add loading states and error handling with proper user feedback.",
+        "testStrategy": "Test project list renders correctly with various project states, create project modal works with form validation, project status calculation is accurate, responsive design works on mobile/desktop, and loading/error states display properly.",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create ProjectCard Component",
+            "description": "Implement the ProjectCard component that displays individual project information in the list view",
+            "dependencies": [],
+            "details": "Create a reusable ProjectCard component in /components/ProjectCard.tsx that displays project name, status badge using ProjectStatusBadge component, and navigation link to project detail page. Include hover effects and responsive design using Tailwind CSS. The card should handle click events to navigate to the project detail view.",
+            "status": "pending",
+            "testStrategy": "Test component renders correctly with different project data, navigation link works properly, hover effects are applied, and responsive design adapts to different screen sizes"
+          },
+          {
+            "id": 2,
+            "title": "Create ProjectStatusBadge Component",
+            "description": "Implement the ProjectStatusBadge component with color-coded status indicators for different project states",
+            "dependencies": [],
+            "details": "Create ProjectStatusBadge component in /components/ProjectStatusBadge.tsx with color-coded badges: Planning (blue), In Progress (orange), Complete (green). Use Tailwind CSS classes for styling and ensure proper contrast ratios for accessibility. Component should accept status prop and render appropriate badge styling.",
+            "status": "pending",
+            "testStrategy": "Verify correct colors are displayed for each status, badges are accessible with proper contrast, and component handles invalid status values gracefully"
+          },
+          {
+            "id": 3,
+            "title": "Implement Project Status Calculation Logic",
+            "description": "Create utility functions to calculate project status based on subproject modes",
+            "dependencies": [],
+            "details": "Create utility functions in /lib/projectUtils.ts to calculate project status: Planning (all subprojects in planned mode), In Progress (at least one subproject in build mode), Complete (all subprojects complete). Include proper TypeScript types and handle edge cases like projects with no subprojects.",
+            "status": "pending",
+            "testStrategy": "Test status calculation with various combinations of subproject modes, verify edge cases are handled correctly, and ensure TypeScript types are properly defined"
+          },
+          {
+            "id": 4,
+            "title": "Create CreateProjectModal Component",
+            "description": "Implement the modal component for creating new projects with form validation",
+            "dependencies": [],
+            "details": "Create CreateProjectModal component in /components/CreateProjectModal.tsx using react-hook-form for form validation. Include project name input field with validation rules, modal overlay with proper focus management, form submission with loading states, and error handling. Use Tailwind CSS for modal styling and animations.",
+            "status": "pending",
+            "testStrategy": "Test form validation works correctly, modal opens and closes properly, form submission handles success and error states, and accessibility features like focus management work as expected"
+          },
+          {
+            "id": 5,
+            "title": "Implement Main Project List Page",
+            "description": "Create the main project list page at /app/page.tsx with responsive grid layout and optimistic updates",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Implement /app/page.tsx as the main project list view with responsive Tailwind CSS grid layout. Integrate ProjectCard components, CreateProjectModal, and implement optimistic updates for project creation. Add loading states, error handling with user feedback, and proper data fetching from Supabase. Include create new project button and handle empty states.",
+            "status": "pending",
+            "testStrategy": "Test page renders project list correctly, responsive grid works on different screen sizes, optimistic updates work properly, loading and error states display correctly, and create project functionality integrates seamlessly"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Project Detail View and Subproject Management",
+        "description": "Create project detail page showing all subprojects with their modes and implement add subproject functionality",
+        "details": "Implement `/app/projects/[projectId]/page.tsx` with:\n\n- Dynamic route parameter handling with proper error boundaries\n- `SubprojectCard` component showing subproject name, mode badge, and navigation\n- `AddSubprojectForm` component with inline creation\n- Breadcrumb navigation component\n\nImplement subproject mode indicators:\n- Planned: Blue badge with \"Planning\" text\n- Build: Orange badge with \"Building\" text  \n- Complete: Green badge with \"Complete\" text\n\nAdd project header with project name and overall status. Use React Suspense for loading states. Implement real-time updates when subprojects change mode to update parent project status.",
+        "testStrategy": "Verify dynamic routing works correctly, subproject list displays with proper mode indicators, add subproject functionality works, project status updates when subprojects change, and navigation breadcrumbs function properly.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Dynamic Route Parameter Handling and Error Boundaries",
+            "description": "Create the main project detail page with proper dynamic routing and error handling for invalid project IDs",
+            "dependencies": [],
+            "details": "Implement `/app/projects/[projectId]/page.tsx` with dynamic route parameter extraction using `useParams()`. Add error boundaries to handle cases where projectId is invalid or project doesn't exist. Include proper TypeScript typing for route parameters and implement loading states with React Suspense.",
+            "status": "pending",
+            "testStrategy": "Test with valid and invalid project IDs, verify error boundaries catch and display appropriate error messages, and confirm loading states display correctly"
+          },
+          {
+            "id": 2,
+            "title": "Create SubprojectCard Component with Mode Indicators",
+            "description": "Build the SubprojectCard component that displays subproject information with color-coded mode badges",
+            "dependencies": [
+              1
+            ],
+            "details": "Create `SubprojectCard` component showing subproject name, mode badge, and navigation link. Implement mode indicators: Planned (blue badge with 'Planning' text), Build (orange badge with 'Building' text), Complete (green badge with 'Complete' text). Include click navigation to subproject detail page and proper hover states.",
+            "status": "pending",
+            "testStrategy": "Verify all three mode badges display with correct colors and text, navigation links work properly, and component renders correctly for different subproject states"
+          },
+          {
+            "id": 3,
+            "title": "Implement AddSubprojectForm Component with Inline Creation",
+            "description": "Create form component for adding new subprojects directly from the project detail page",
+            "dependencies": [
+              1
+            ],
+            "details": "Build `AddSubprojectForm` component with inline creation functionality. Include form validation using react-hook-form, input field for subproject name, and submit handling that creates new subproject and updates the UI. Add proper error handling and success feedback. Form should reset after successful submission.",
+            "status": "pending",
+            "testStrategy": "Test form validation works correctly, successful subproject creation updates the list immediately, error states display properly, and form resets after submission"
+          },
+          {
+            "id": 4,
+            "title": "Create Project Header and Breadcrumb Navigation",
+            "description": "Implement project header displaying project name and status, plus breadcrumb navigation component",
+            "dependencies": [
+              1
+            ],
+            "details": "Create project header component showing project name and overall status badge. Implement breadcrumb navigation component with links: Home > Projects > [Project Name]. Include proper styling with Tailwind CSS and ensure responsive design. Header should update dynamically when project status changes.",
+            "status": "pending",
+            "testStrategy": "Verify project header displays correct information, breadcrumb navigation links work properly, responsive design functions on mobile and desktop, and status updates reflect correctly"
+          },
+          {
+            "id": 5,
+            "title": "Implement Real-time Updates for Project Status Changes",
+            "description": "Add real-time functionality to update parent project status when subprojects change modes",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Implement real-time updates using Supabase subscriptions to listen for subproject mode changes. Update parent project status calculation logic: Planning (all subprojects planned), In Progress (at least one building), Complete (all complete). Ensure UI updates immediately when subproject modes change without page refresh.",
+            "status": "pending",
+            "testStrategy": "Test that project status updates automatically when subproject modes change, verify real-time subscriptions work correctly, and confirm status calculation logic is accurate for all scenarios"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Subproject Planned Mode - Note Taking Interface",
+        "description": "Implement the planned mode interface for subprojects with stream-of-consciousness note taking capabilities",
+        "details": "Create `/app/projects/[projectId]/subprojects/[subprojectId]/page.tsx` with mode-specific rendering. For planned mode, implement:\n\n- `NoteInput` component with auto-expanding textarea using react-textarea-autosize@^8.5.3\n- `NoteTimeline` component displaying notes in chronological order\n- `NoteCard` component with timestamp and content\n- Image upload functionality using drag-and-drop with react-dropzone@^14.2.3\n- \"Let's Build It\" prominent CTA button\n\nImplement real-time note saving with debounced input (500ms delay). Support markdown formatting in note display using react-markdown. Add keyboard shortcuts (Ctrl+Enter to save note). Store images in Supabase Storage and reference URLs in notes table.",
+        "testStrategy": "Test note creation and display, image upload functionality, real-time saving with proper debouncing, markdown rendering in notes, keyboard shortcuts work, and \"Let's Build It\" button is prominently displayed.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Main Subproject Page Component with Mode Routing",
+            "description": "Implement the main subproject page component that handles mode-specific rendering for planned, build, and complete modes",
+            "dependencies": [],
+            "details": "Create `/app/projects/[projectId]/subprojects/[subprojectId]/page.tsx` with dynamic route parameter handling, mode detection logic, and conditional rendering based on subproject mode. Include proper error boundaries and loading states for the page component.",
+            "status": "pending",
+            "testStrategy": "Test dynamic routing works correctly, mode detection functions properly, error boundaries handle invalid routes, and loading states display appropriately"
+          },
+          {
+            "id": 2,
+            "title": "Implement NoteInput Component with Auto-expanding Textarea",
+            "description": "Create the note input component with auto-expanding textarea functionality and real-time saving capabilities",
+            "dependencies": [
+              1
+            ],
+            "details": "Build `NoteInput` component using react-textarea-autosize@^8.5.3 for auto-expanding behavior. Implement debounced saving with 500ms delay using useCallback and useEffect hooks. Add keyboard shortcuts (Ctrl+Enter to save note) and proper focus management.",
+            "status": "pending",
+            "testStrategy": "Test textarea auto-expands correctly, debounced saving works with 500ms delay, keyboard shortcuts function properly, and focus management behaves as expected"
+          },
+          {
+            "id": 3,
+            "title": "Build NoteTimeline and NoteCard Components",
+            "description": "Create components to display notes in chronological order with proper formatting and markdown support",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement `NoteTimeline` component that fetches and displays notes in chronological order. Create `NoteCard` component with timestamp formatting, markdown rendering using react-markdown, and proper styling. Include loading states and empty state handling.",
+            "status": "pending",
+            "testStrategy": "Test notes display in correct chronological order, markdown rendering works properly, timestamps format correctly, and loading/empty states display appropriately"
+          },
+          {
+            "id": 4,
+            "title": "Implement Image Upload with Drag-and-Drop Functionality",
+            "description": "Add image upload capabilities using drag-and-drop interface with Supabase Storage integration",
+            "dependencies": [
+              2
+            ],
+            "details": "Integrate react-dropzone@^14.2.3 for drag-and-drop image uploads. Implement Supabase Storage integration to store images and generate public URLs. Add image preview functionality, upload progress indicators, and proper error handling for failed uploads.",
+            "status": "pending",
+            "testStrategy": "Test drag-and-drop functionality works correctly, images upload to Supabase Storage successfully, public URLs are generated properly, and error handling works for failed uploads"
+          },
+          {
+            "id": 5,
+            "title": "Add Let's Build It CTA Button and Complete Integration",
+            "description": "Implement the prominent CTA button and integrate all components into the planned mode interface",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Create a prominent 'Let's Build It' CTA button that transitions the subproject from planned to build mode. Integrate all components (NoteInput, NoteTimeline, NoteCard, image upload) into a cohesive planned mode interface. Add proper state management and mode transition logic.",
+            "status": "pending",
+            "testStrategy": "Test CTA button is prominently displayed, mode transition from planned to build works correctly, all components integrate seamlessly, and state management functions properly throughout the interface"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Taskmaster Integration and PRD Generation",
+        "description": "Implement the \"Let's Build It\" functionality that aggregates notes and generates PRD and tasks using Taskmaster integration",
+        "details": "Create `/lib/taskmaster.ts` for Taskmaster integration. Implement the \"Let's Build It\" workflow:\n\n1. **Note Aggregation**: Collect all notes from subproject, format with timestamps and type indicators\n2. **PRD Generation**: Call Taskmaster API to generate PRD from aggregated notes\n3. **Task Generation**: Call Taskmaster API to break down PRD into structured tasks\n4. **Markdown Persistence**: Save both PRD and tasks as markdown in database\n5. **Mode Transition**: Update subproject mode from 'planned' to 'build'\n\nImplement proper error handling, loading states, and user feedback. Use streaming responses if Taskmaster supports it. Add confirmation dialog before generation to prevent accidental triggers. Store generated markdown in `prd_markdown` and `tasks_markdown` fields.",
+        "testStrategy": "Test note aggregation includes all content types, Taskmaster API integration works correctly, generated markdown is properly formatted and saved, mode transition occurs successfully, error handling works for API failures, and loading states provide good UX.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Taskmaster API Integration Module",
+            "description": "Implement the core Taskmaster API integration module with authentication and API client setup",
+            "dependencies": [],
+            "details": "Create `/lib/taskmaster.ts` with TypeScript interfaces for API requests/responses. Implement authentication handling, base API client with proper error handling, and methods for PRD generation and task breakdown. Include retry logic and timeout handling for robust API communication.",
+            "status": "pending",
+            "testStrategy": "Test API authentication works correctly, verify error handling for network failures, test retry logic with simulated failures, and ensure proper TypeScript typing for all API responses."
+          },
+          {
+            "id": 2,
+            "title": "Implement Note Aggregation System",
+            "description": "Build the note aggregation functionality that collects and formats all notes from a subproject",
+            "dependencies": [
+              1
+            ],
+            "details": "Create functions to query all notes from a subproject, format them with timestamps and type indicators (text, voice, image), and prepare the aggregated content for Taskmaster API consumption. Handle different note types and ensure proper chronological ordering.",
+            "status": "pending",
+            "testStrategy": "Test aggregation includes all note types, verify chronological ordering is correct, test with empty subprojects, and ensure formatting matches Taskmaster API requirements."
+          },
+          {
+            "id": 3,
+            "title": "Build PRD and Task Generation Workflow",
+            "description": "Implement the core workflow that generates PRD and tasks using the Taskmaster API",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create the main workflow function that takes aggregated notes, calls Taskmaster API for PRD generation, then uses the PRD to generate structured tasks. Implement streaming responses if supported, proper error handling for API failures, and progress tracking for the multi-step process.",
+            "status": "pending",
+            "testStrategy": "Test PRD generation produces valid markdown, verify task generation creates proper structure, test error handling for API failures, and ensure streaming responses work correctly if implemented."
+          },
+          {
+            "id": 4,
+            "title": "Implement Markdown Persistence and Database Updates",
+            "description": "Create functionality to save generated PRD and tasks as markdown in the database",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement database update functions to save generated PRD markdown to `prd_markdown` field and tasks markdown to `tasks_markdown` field. Include transaction handling to ensure data consistency and proper error recovery if database operations fail.",
+            "status": "pending",
+            "testStrategy": "Test markdown is properly saved to database fields, verify transaction rollback on failures, test with large markdown content, and ensure data integrity is maintained throughout the process."
+          },
+          {
+            "id": 5,
+            "title": "Create Let's Build It UI with Confirmation and Loading States",
+            "description": "Build the user interface components for the Let's Build It functionality with proper UX",
+            "dependencies": [
+              4
+            ],
+            "details": "Create confirmation dialog component to prevent accidental triggers, implement loading states with progress indicators during generation, add user feedback for each step of the process, and create the mode transition logic to update subproject from 'planned' to 'build' status.",
+            "status": "pending",
+            "testStrategy": "Test confirmation dialog prevents accidental execution, verify loading states provide clear feedback, test mode transition updates correctly, and ensure error messages are user-friendly and actionable."
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Markdown Parser and Task Extraction",
+        "description": "Implement markdown parsing to extract structured task data from Taskmaster-generated task markdown",
+        "details": "Create `/lib/markdown-parser.ts` to parse Taskmaster-generated task markdown and extract structured task data. Implement:\n\n- Task title extraction from markdown headers\n- Task description parsing from content blocks\n- Subtask extraction from nested lists\n- Acceptance criteria identification\n- Task ID generation based on markdown structure\n\nUse remark@^15.0.1 and remark-parse@^11.0.0 for robust markdown parsing. Create TypeScript interfaces for parsed task structure:\n\n```typescript\nexport interface ParsedTask {\n  id: string;\n  title: string;\n  description: string;\n  subtasks: string[];\n  acceptanceCriteria: string[];\n  testExpectations: string[];\n}\n```\n\nImplement error handling for malformed markdown and fallback parsing strategies.",
+        "testStrategy": "Test parsing of various markdown task formats, verify extracted task data structure is correct, handle edge cases like missing sections or malformed markdown, and ensure task IDs are consistently generated.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and configure markdown parsing dependencies",
+            "description": "Set up remark and remark-parse packages for markdown processing",
+            "dependencies": [],
+            "details": "Install remark@^15.0.1 and remark-parse@^11.0.0 packages. Configure package.json dependencies and ensure TypeScript types are available. Set up basic remark processor configuration for parsing markdown AST.",
+            "status": "pending",
+            "testStrategy": "Verify packages install correctly, TypeScript compilation passes, and basic markdown parsing works without errors"
+          },
+          {
+            "id": 2,
+            "title": "Create TypeScript interfaces for parsed task structure",
+            "description": "Define comprehensive TypeScript interfaces for the parsed markdown task data",
+            "dependencies": [],
+            "details": "Create ParsedTask interface with id, title, description, subtasks, acceptanceCriteria, and testExpectations properties. Add supporting interfaces for markdown AST node types and parsing options. Ensure type safety for all parsed data structures.",
+            "status": "pending",
+            "testStrategy": "Verify TypeScript compilation passes and interfaces correctly type all expected data structures"
+          },
+          {
+            "id": 3,
+            "title": "Implement core markdown parsing functionality",
+            "description": "Create the main markdown parser class with AST traversal and data extraction",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement MarkdownParser class in /lib/markdown-parser.ts with methods for parsing markdown AST, traversing nodes, and extracting structured data. Include functions for header extraction, content block parsing, and list processing.",
+            "status": "pending",
+            "testStrategy": "Test parsing of basic markdown structures, verify AST traversal works correctly, and ensure extracted data matches expected format"
+          },
+          {
+            "id": 4,
+            "title": "Implement specific task data extraction methods",
+            "description": "Create specialized methods for extracting task titles, descriptions, subtasks, and acceptance criteria",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement extractTaskTitle() for header parsing, extractDescription() for content blocks, extractSubtasks() for nested lists, extractAcceptanceCriteria() for criteria identification, and generateTaskId() for ID creation based on markdown structure.",
+            "status": "pending",
+            "testStrategy": "Test each extraction method with various markdown formats, verify correct data extraction, and ensure task IDs are consistently generated"
+          },
+          {
+            "id": 5,
+            "title": "Add error handling and fallback parsing strategies",
+            "description": "Implement robust error handling for malformed markdown and fallback parsing mechanisms",
+            "dependencies": [
+              4
+            ],
+            "details": "Add try-catch blocks around parsing operations, implement fallback strategies for missing sections, handle malformed markdown gracefully, and provide meaningful error messages. Include validation for required fields and default values for optional ones.",
+            "status": "pending",
+            "testStrategy": "Test with malformed markdown, missing sections, and edge cases. Verify error handling works correctly and fallback strategies provide usable results"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Build Mode Task List UI and Interaction",
+        "description": "Implement the build mode interface with task list rendering, status management, and commenting functionality",
+        "details": "Extend subproject page to render build mode with:\n\n- `TaskAccordion` component using Radix UI Accordion for collapsible task list\n- `TaskCard` component showing title, description, status, and subtasks\n- `TaskStatusToggle` component for marking tasks complete\n- `TaskComments` component with comment thread display\n- `AddComment` form component with real-time submission\n\nImplementate task status management:\n- Store status in `task_status` table (UI state only)\n- Visual indicators for todo/in_progress/done states\n- Progress calculation for subproject completion\n\nAdd markdown rendering for task descriptions using react-markdown with remark-gfm for GitHub Flavored Markdown support. Implement optimistic updates for status changes and comments.",
+        "testStrategy": "Test task list renders from parsed markdown, task status toggles work correctly, comments can be added and displayed, progress calculation is accurate, markdown rendering works properly, and optimistic updates provide smooth UX.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create TaskAccordion and TaskCard Components",
+            "description": "Implement the core task display components using Radix UI Accordion for collapsible task list functionality",
+            "dependencies": [],
+            "details": "Create TaskAccordion component using @radix-ui/react-accordion for collapsible task list. Implement TaskCard component to display task title, description, status badge, and nested subtasks. Add proper styling with Tailwind CSS for visual hierarchy and responsive design. Include expand/collapse animations and keyboard navigation support.",
+            "status": "pending",
+            "testStrategy": "Test accordion expand/collapse functionality, verify task cards render correctly with all required fields, test keyboard navigation, and ensure responsive design works on mobile devices"
+          },
+          {
+            "id": 2,
+            "title": "Implement Task Status Management System",
+            "description": "Build task status toggle functionality with database integration and visual indicators",
+            "dependencies": [
+              1
+            ],
+            "details": "Create TaskStatusToggle component for marking tasks as todo/in_progress/done. Implement database operations to store status in task_status table. Add visual indicators with color-coded badges and icons. Implement optimistic updates for smooth UX. Create progress calculation logic for subproject completion percentage based on task statuses.",
+            "status": "pending",
+            "testStrategy": "Test status toggle functionality works correctly, verify database updates persist, test optimistic updates provide immediate feedback, and validate progress calculation accuracy"
+          },
+          {
+            "id": 3,
+            "title": "Build Task Comments System",
+            "description": "Implement commenting functionality with thread display and real-time comment submission",
+            "dependencies": [
+              1
+            ],
+            "details": "Create TaskComments component to display comment threads with user avatars, timestamps, and comment content. Implement AddComment form component with textarea, character count, and submit functionality. Add real-time comment submission with optimistic updates. Include comment validation and error handling. Style comments with proper threading and responsive layout.",
+            "status": "pending",
+            "testStrategy": "Test comment display renders correctly, verify comment submission works with form validation, test real-time updates, and ensure comment threading displays properly"
+          },
+          {
+            "id": 4,
+            "title": "Integrate Markdown Rendering for Task Descriptions",
+            "description": "Add markdown rendering support for task descriptions using react-markdown with GitHub Flavored Markdown",
+            "dependencies": [
+              1
+            ],
+            "details": "Install and configure react-markdown with remark-gfm plugin for GitHub Flavored Markdown support. Implement markdown rendering in TaskCard component for task descriptions. Add syntax highlighting for code blocks, support for tables, strikethrough, and task lists. Apply consistent styling that matches the overall design system.",
+            "status": "pending",
+            "testStrategy": "Test markdown rendering displays correctly for various markdown elements, verify code syntax highlighting works, test table rendering, and ensure markdown styles are consistent with design system"
+          },
+          {
+            "id": 5,
+            "title": "Integrate Build Mode UI into Subproject Page",
+            "description": "Extend the existing subproject page to render the complete build mode interface with all components",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Modify the subproject page to detect build mode and render the TaskAccordion with all task components. Integrate task status management, commenting system, and markdown rendering. Add loading states, error boundaries, and proper data fetching. Implement responsive layout that works well on both desktop and mobile devices. Add proper TypeScript types for all props and state.",
+            "status": "pending",
+            "testStrategy": "Test complete build mode interface renders correctly, verify all components work together seamlessly, test responsive design, validate TypeScript types, and ensure proper error handling and loading states"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Completion Logic and Project Status Management",
+        "description": "Implement completion rules, automatic status updates, and project progression logic",
+        "details": "Implement completion logic and status management:\n\n1. **Subproject Completion**: Automatically mark subproject as 'complete' when all tasks are marked done\n2. **Project Status Updates**: Recalculate project status when subproject modes change\n3. **Real-time Updates**: Use Supabase real-time subscriptions for status changes\n4. **Completion Animations**: Add celebration animations using framer-motion@^10.16.16\n\nCreate `/lib/completion.ts` with functions:\n- `checkSubprojectCompletion(subprojectId)`: Check if all tasks are done\n- `updateProjectStatus(projectId)`: Recalculate project status based on subprojects\n- `handleTaskStatusChange(taskId, status)`: Trigger completion checks\n\nImplement database triggers or use Supabase Edge Functions for automatic status updates. Add visual feedback for completion states and progress indicators throughout the app.",
+        "testStrategy": "Test subproject completion triggers when all tasks are done, project status updates correctly when subprojects change, real-time updates work across browser tabs, completion animations display properly, and progress indicators are accurate throughout the application.",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create completion logic utility functions",
+            "description": "Implement the core completion logic functions in /lib/completion.ts",
+            "dependencies": [],
+            "details": "Create /lib/completion.ts with three main functions: checkSubprojectCompletion(subprojectId) to verify all tasks are done, updateProjectStatus(projectId) to recalculate project status based on subprojects, and handleTaskStatusChange(taskId, status) to trigger completion checks. Include proper error handling and TypeScript types.",
+            "status": "pending",
+            "testStrategy": "Unit test each function with various task completion scenarios, verify correct status calculations, and test error handling for invalid inputs"
+          },
+          {
+            "id": 2,
+            "title": "Implement Supabase real-time subscriptions",
+            "description": "Set up real-time subscriptions for automatic status updates across browser tabs",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure Supabase real-time subscriptions to listen for changes in tasks, subprojects, and projects tables. Implement subscription handlers that trigger completion logic when task statuses change. Ensure proper cleanup of subscriptions to prevent memory leaks.",
+            "status": "pending",
+            "testStrategy": "Test real-time updates work across multiple browser tabs, verify subscription cleanup on component unmount, and test reconnection after network interruptions"
+          },
+          {
+            "id": 3,
+            "title": "Create database triggers for automatic status updates",
+            "description": "Implement database triggers or Supabase Edge Functions for server-side completion logic",
+            "dependencies": [
+              1
+            ],
+            "details": "Create database triggers that automatically update subproject and project statuses when task completion changes. Alternatively, implement Supabase Edge Functions to handle status calculations server-side. Ensure triggers maintain data consistency and handle concurrent updates properly.",
+            "status": "pending",
+            "testStrategy": "Test triggers fire correctly on task status changes, verify data consistency under concurrent updates, and test performance with large numbers of tasks"
+          },
+          {
+            "id": 4,
+            "title": "Add completion animations with framer-motion",
+            "description": "Implement celebration animations and visual feedback for completion states",
+            "dependencies": [
+              1
+            ],
+            "details": "Create completion animations using framer-motion@^10.16.16 including confetti effects, progress bar animations, and status badge transitions. Implement visual feedback components for task completion, subproject completion, and project completion states.",
+            "status": "pending",
+            "testStrategy": "Test animations play correctly on completion events, verify performance on various devices, and ensure animations are accessible with reduced motion preferences"
+          },
+          {
+            "id": 5,
+            "title": "Integrate progress indicators throughout the application",
+            "description": "Add progress indicators and completion status displays across all relevant components",
+            "dependencies": [
+              1,
+              2,
+              4
+            ],
+            "details": "Integrate progress indicators in project cards, subproject views, and task lists. Update existing components to display completion percentages, status badges, and progress bars. Ensure all progress indicators update in real-time when completion states change.",
+            "status": "pending",
+            "testStrategy": "Test progress indicators display accurate completion percentages, verify real-time updates across all components, and test responsive design on mobile and desktop"
+          },
+          {
+            "id": 6,
+            "title": "Run automated and unit tests",
+            "description": "Execute all automated tests and unit tests for this task to ensure functionality works correctly",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
+            "status": "pending",
+            "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
+          },
+          {
+            "id": 7,
+            "title": "Build and iterate until successful",
+            "description": "Attempt to build the project and fix any build errors until the build succeeds",
+            "dependencies": [
+              6
+            ],
+            "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
+            "status": "pending",
+            "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2026-01-12T15:33:29.433Z",
+      "updated": "2026-01-12T15:33:29.433Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
