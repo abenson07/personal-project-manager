@@ -559,6 +559,31 @@ export async function getSubprojectsByProjectId(projectId: string): Promise<Subp
 }
 
 /**
+ * Get a subproject by ID (Task 6)
+ */
+export async function getSubprojectById(id: string): Promise<Subproject | null> {
+  try {
+    const { data, error } = await supabase
+      .from('subprojects')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No rows returned
+        return null
+      }
+      throw new DatabaseError(error.message, error.code, error.details)
+    }
+    return data
+  } catch (error) {
+    if (error instanceof DatabaseError) throw error
+    throw new DatabaseError('Failed to get subproject by ID', undefined, String(error))
+  }
+}
+
+/**
  * Create a new subproject (Task 3)
  */
 export async function createSubproject(

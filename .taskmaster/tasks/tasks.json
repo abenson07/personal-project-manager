@@ -478,7 +478,7 @@
         "dependencies": [
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -486,7 +486,7 @@
             "description": "Implement the main subproject page component that handles mode-specific rendering for planned, build, and complete modes",
             "dependencies": [],
             "details": "Create `/app/projects/[projectId]/subprojects/[subprojectId]/page.tsx` with dynamic route parameter handling, mode detection logic, and conditional rendering based on subproject mode. Include proper error boundaries and loading states for the page component.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test dynamic routing works correctly, mode detection functions properly, error boundaries handle invalid routes, and loading states display appropriately"
           },
           {
@@ -497,7 +497,7 @@
               1
             ],
             "details": "Build `NoteInput` component using react-textarea-autosize@^8.5.3 for auto-expanding behavior. Implement debounced saving with 500ms delay using useCallback and useEffect hooks. Add keyboard shortcuts (Ctrl+Enter to save note) and proper focus management.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test textarea auto-expands correctly, debounced saving works with 500ms delay, keyboard shortcuts function properly, and focus management behaves as expected"
           },
           {
@@ -508,7 +508,7 @@
               1
             ],
             "details": "Implement `NoteTimeline` component that fetches and displays notes in chronological order. Create `NoteCard` component with timestamp formatting, markdown rendering using react-markdown, and proper styling. Include loading states and empty state handling.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test notes display in correct chronological order, markdown rendering works properly, timestamps format correctly, and loading/empty states display appropriately"
           },
           {
@@ -519,7 +519,7 @@
               2
             ],
             "details": "Integrate react-dropzone@^14.2.3 for drag-and-drop image uploads. Implement Supabase Storage integration to store images and generate public URLs. Add image preview functionality, upload progress indicators, and proper error handling for failed uploads.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test drag-and-drop functionality works correctly, images upload to Supabase Storage successfully, public URLs are generated properly, and error handling works for failed uploads"
           },
           {
@@ -532,7 +532,7 @@
               4
             ],
             "details": "Create a prominent 'Let's Build It' CTA button that transitions the subproject from planned to build mode. Integrate all components (NoteInput, NoteTimeline, NoteCard, image upload) into a cohesive planned mode interface. Add proper state management and mode transition logic.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test CTA button is prominently displayed, mode transition from planned to build works correctly, all components integrate seamlessly, and state management functions properly throughout the interface"
           },
           {
@@ -547,7 +547,7 @@
               5
             ],
             "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
           },
           {
@@ -558,7 +558,7 @@
               6
             ],
             "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
           }
         ]

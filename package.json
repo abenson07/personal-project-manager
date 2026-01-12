@@ -17,8 +17,10 @@
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.71.0",
     "react-markdown": "^10.1.0",
+    "react-textarea-autosize": "^8.5.9",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {

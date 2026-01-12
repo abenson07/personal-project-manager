@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { createProject } from '@/lib/database'
+import { createProject, createSubproject } from '@/lib/database'
 import { useRouter } from 'next/navigation'
 
 interface CreateProjectModalProps {
@@ -36,7 +36,11 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
     setError(null)
 
     try {
-      const project = await createProject(data.name.trim(), 'planning')
+      const projectName = data.name.trim()
+      const project = await createProject(projectName, 'planning')
+      
+      // Create a subproject with the same name as the project
+      const subproject = await createSubproject(project.id, projectName, 'planned')
       
       // Reset form
       reset()
@@ -49,8 +53,8 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
         onProjectCreated()
       }
       
-      // Navigate to new project
-      router.push(`/projects/${project.id}`)
+      // Navigate directly to the new subproject
+      router.push(`/projects/${project.id}/subprojects/${subproject.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create project')
       setIsSubmitting(false)

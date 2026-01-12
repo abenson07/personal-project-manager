@@ -56,6 +56,13 @@ function ProjectPageContent() {
     }
   }, [projectId])
 
+  // Redirect to subproject if there's exactly one
+  useEffect(() => {
+    if (!loading && subprojects.length === 1 && project) {
+      router.replace(`/projects/${projectId}/subprojects/${subprojects[0].id}`)
+    }
+  }, [loading, subprojects, project, projectId, router])
+
   // Set up real-time subscription for subproject changes
   useEffect(() => {
     if (!projectId) return
