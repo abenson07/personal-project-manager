@@ -217,7 +217,7 @@
               1
             ],
             "details": "Create `/types/database.ts` file with TypeScript interfaces for Project, Subproject, Note, TaskComment, and TaskStatus models. Include all required fields with proper typing for status enums, timestamps, and optional fields. Add utility types for database operations like insert/update payloads.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript interfaces match database schema exactly, test type checking works for all model properties, and ensure enum values align with database constraints"
           },
           {
@@ -229,7 +229,7 @@
               2
             ],
             "details": "Create `/lib/database.ts` with utility functions for project operations: fetchProjectsWithSubprojectCounts(), getProjectById(), createProject(), updateProjectStatus(). Include proper error handling, TypeScript typing, and optimized queries using Supabase client joins and aggregations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test all project utility functions return correct data structures, verify subproject counts are accurate, test error handling for invalid IDs, and ensure TypeScript types are properly inferred"
           },
           {
@@ -241,7 +241,7 @@
               2
             ],
             "details": "Extend `/lib/database.ts` with functions for subproject operations: getSubprojectsByProjectId(), createSubproject(), updateSubprojectMode(), getNotesForSubproject(), createNote(), getTaskCommentsForSubproject(), createTaskComment(), updateTaskStatus(). Include proper relationship handling and cascading operations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test subproject CRUD operations work correctly, verify foreign key relationships are maintained, test note and comment creation/retrieval, and ensure task status updates persist properly"
           },
           {
@@ -253,7 +253,7 @@
               4
             ],
             "details": "Add status calculation functions to `/lib/database.ts`: calculateProjectStatus(), updateProjectStatusFromSubprojects(), getProjectProgress(). Implement logic where project status is 'planning' if all subprojects are 'planned', 'in_progress' if any are 'build', and 'complete' if all are 'complete'. Include progress percentage calculations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test project status calculation logic with various subproject mode combinations, verify automatic status updates trigger correctly, test progress percentage calculations are accurate, and ensure status changes propagate properly"
           },
           {
@@ -268,7 +268,7 @@
               5
             ],
             "details": "Run test suite using npm test or appropriate test command. Verify all unit tests pass, integration tests pass if applicable, and any component tests execute successfully. Fix any failing tests before proceeding.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify all tests pass successfully, test coverage meets requirements, and no regressions are introduced"
           },
           {
@@ -279,7 +279,7 @@
               6
             ],
             "details": "Run npm run build (or appropriate build command) and fix any compilation errors, type errors, linting errors, or build failures. Iterate on fixes until the build completes successfully without errors. Verify production build works correctly.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify build completes successfully with no errors, production build works correctly, and all build artifacts are generated properly"
           }
         ]
