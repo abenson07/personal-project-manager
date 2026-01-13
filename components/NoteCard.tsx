@@ -56,9 +56,11 @@ export default function NoteCard({ note }: NoteCardProps) {
             />
           </div>
         ) : (
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {note.content}
-          </ReactMarkdown>
+          <div className="text-gray-900 [&_*]:!text-gray-900 [&_p]:!text-gray-900 [&_h1]:!text-gray-900 [&_h2]:!text-gray-900 [&_h3]:!text-gray-900 [&_h4]:!text-gray-900 [&_h5]:!text-gray-900 [&_h6]:!text-gray-900 [&_li]:!text-gray-900 [&_strong]:!text-gray-900 [&_em]:!text-gray-900 [&_code]:!text-gray-900 [&_pre]:!text-gray-900">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {note.content}
+            </ReactMarkdown>
+          </div>
         )}
       </div>
     </div>
